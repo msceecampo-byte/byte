@@ -2,8 +2,8 @@
 // The bag lives in localStorage so it survives page loads. Checkout is a
 // placeholder until the store moves onto Shopify for the February 2027 launch.
 
-const CURRENCY = "$";
-const FREE_SHIPPING_AT = 150;
+const CURRENCY = "S$";
+const FREE_SHIPPING_AT = 100;
 const BAG_KEY = "fs-bag";
 
 const money = (n) => `${CURRENCY}${n.toFixed(n % 1 ? 2 : 0)}`;
@@ -74,7 +74,7 @@ function renderChrome() {
     <div class="footer-inner">
       <div class="footer-brand">
         <img src="brand/monogram-cream.svg" alt="" width="64" height="64">
-        <p>Golf apparel for whoever keeps showing up.</p>
+        <p>Refined golf apparel for the new generation of golfers. Designed in Singapore.</p>
       </div>
       <div>
         <h4>Shop</h4>
@@ -103,12 +103,17 @@ function renderChrome() {
     toggle.setAttribute("aria-expanded", String(open));
   });
   document.querySelector(".bag-toggle").addEventListener("click", () => bag.open());
-  document.querySelectorAll("[data-soon]").forEach((a) =>
+  bindSoonLinks();
+}
+
+function bindSoonLinks(root = document) {
+  root.querySelectorAll("[data-soon]:not([data-soon-bound])").forEach((a) => {
+    a.dataset.soonBound = "1";
     a.addEventListener("click", (e) => {
       e.preventDefault();
       toast("That page is coming with the February launch.");
-    })
-  );
+    });
+  });
 }
 
 /* ------------------------------------------------------------ bag */
@@ -189,7 +194,7 @@ const bag = {
     const sub = this.subtotal();
     const left = FREE_SHIPPING_AT - sub;
     document.querySelector(".ship-meter").innerHTML = count
-      ? `<p>${left > 0 ? `You're <strong>${money(left)}</strong> away from free shipping` : "You've unlocked <strong>free shipping</strong>"}</p>
+      ? `<p>${left > 0 ? `You're <strong>${money(left)}</strong> away from free delivery` : "You've unlocked <strong>free delivery</strong>"}</p>
          <div class="meter"><span style="width:${Math.min(100, (sub / FREE_SHIPPING_AT) * 100)}%"></span></div>`
       : "";
 
@@ -228,7 +233,7 @@ const bag = {
 
     document.querySelector(".drawer-foot").innerHTML = `
       <div class="subtotal"><span>Subtotal</span><span>${money(sub)}</span></div>
-      <p class="muted small">Shipping and taxes calculated at checkout.</p>
+      <p class="muted small">Prices include GST. Delivery calculated at checkout.</p>
       <button class="btn btn-block checkout">Checkout</button>`;
     document.querySelector(".checkout").addEventListener("click", () => checkoutSoon());
   },
@@ -250,6 +255,7 @@ function waitlistForm(source) {
       <label class="sr-only" for="wl-${source}">Email address</label>
       <input id="wl-${source}" type="email" name="email" placeholder="Your email" required autocomplete="email">
       <button class="btn" type="submit">Join the Society</button>
+      <p class="consent">By joining, you agree to receive emails from Fairway Society about the launch. Unsubscribe anytime. See our <a href="#" data-soon>privacy policy</a>.</p>
     </form>`;
 }
 
@@ -278,6 +284,7 @@ function modal(html) {
   wrap.addEventListener("click", (e) => e.target === wrap && close());
   wrap.querySelector(".modal-close").addEventListener("click", close);
   bindWaitlists(wrap);
+  bindSoonLinks(wrap);
   wrap.querySelector("input, button")?.focus();
 }
 
@@ -428,7 +435,7 @@ const pages = {
               .join("")}</div>
           </div>
           <button class="btn btn-block add">Add to bag — ${money(p.price)}</button>
-          <p class="muted small center">Free shipping over ${money(FREE_SHIPPING_AT)} · Free 30-day returns</p>
+          <p class="muted small center">Free Singapore delivery over ${money(FREE_SHIPPING_AT)} · Free 30-day returns</p>
           <div class="accordions">
             <details open><summary>Details</summary><ul>${p.features.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></details>
             <details><summary>Fabric &amp; care</summary><p>Machine wash cold on a delicate cycle and lay flat to dry. Don't iron over the embroidery. Final fabric composition will be confirmed once sampling is finished.</p></details>
@@ -469,12 +476,6 @@ const pages = {
       }
       bag.add(p.id, colorIndex, size);
     });
-    el.querySelectorAll("[data-soon]").forEach((a) =>
-      a.addEventListener("click", (e) => {
-        e.preventDefault();
-        toast("The size guide is coming with the February launch.");
-      })
-    );
     drawColor();
 
     const pairs = { tops: ["bottoms", "accessories"], bottoms: ["tops", "accessories"], dresses: ["accessories", "tops"], accessories: ["tops", "bottoms"] };
@@ -497,4 +498,5 @@ document.addEventListener("DOMContentLoaded", () => {
   if (document.body.dataset.page !== "men") renderChrome();
   bag.mount();
   bindWaitlists();
+  bindSoonLinks();
 });

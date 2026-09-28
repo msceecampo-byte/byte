@@ -25,7 +25,7 @@ The bag is saved in the browser. Checkout shows a "opens February 2027" message 
 
 All products live in `assets/js/products.js`: names, prices, descriptions and colourways. Product images are illustrations drawn in each colourway (`assets/js/garments.js`). To use a photo instead, add `image: "path/to/photo.jpg"` to a colourway.
 
-**Prices are placeholders.** Confirm them against your supplier costings.
+Prices are in SGD (S$79–119 for apparel, S$39–45 for accessories). They assume a supplier cost of up to S$20 per piece, which gives roughly a 4–6× markup. Free delivery starts at S$100. Change these in `assets/js/app.js` (`CURRENCY`, `FREE_SHIPPING_AT`).
 
 ## Logo files
 
@@ -33,7 +33,7 @@ Everything is in `brand/`. The text in each SVG is converted to outlines, so the
 
 - `wordmark-*` primary logo (with and without the "Golf · Leisure · Connection" tagline)
 - `stacked-*` square version
-- `monogram-*` FS monogram for embroidery and small sizes
+- `monogram-*` FS monogram for embroidery and small sizes, in five options: interlocked (`monogram-forest`), `ring`, `crest`, `flag` and `tee`. See them compared on `brand.html`.
 - `badge-*` circular seal
 - `favicon.svg` browser-tab icon
 
@@ -48,6 +48,6 @@ The fonts in `tools/fonts` (Great Vibes, Playfair Display, Montserrat) are from 
 
 ## Next steps toward the Shopify launch
 
-1. Replace the illustrations with campaign photography.
+1. Replace the illustrations with your own photos. Shoot product images at a 4:5 ratio (1600×2000 px is ideal) on a plain cream or light background, with the same lighting for every product. Save them as JPG or WebP under 400 KB, put them in `assets/img/`, and add `image: "assets/img/clubhouse-knit-polo-blush.jpg"` to that colourway in `products.js`.
 2. Connect the waitlist forms to an email tool (Shopify Email or Klaviyo). Look for the `TODO` in `assets/js/app.js`.
 3. Move the layout into a Shopify theme and load the products from `products.js` into Shopify.

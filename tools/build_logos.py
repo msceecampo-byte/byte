@@ -220,6 +220,75 @@ def badge(color, bg=None):
     return svg((0, 0, 600, 600), body, "Fairway Society badge", bg)
 
 
+# ---------------------------------------------------------------- monogram explorations
+# Five directions for the small-size mark. All share the 400x400 canvas so they
+# can be compared side by side on the brand page.
+
+def mono_ring(color, accent=None):
+    body = (
+        f'<circle cx="200" cy="200" r="182" fill="none" stroke="{color}" stroke-width="6"/>'
+        f'<circle cx="200" cy="200" r="168" fill="none" stroke="{color}" stroke-width="1.8"/>'
+    )
+    body += monogram_group(color, 230, 200, 196, "r")
+    BOUNDS.clear()
+    return svg((0, 0, 400, 400), body, "FS monogram, ring")
+
+
+def mono_crest(color, accent=None):
+    shield = "M200,22 L352,62 L352,196 Q352,318 200,382 Q48,318 48,196 L48,62 Z"
+    inner = "M200,40 L336,76 L336,196 Q336,304 200,364 Q64,304 64,196 L64,76 Z"
+    body = (
+        f'<path d="{shield}" fill="none" stroke="{color}" stroke-width="6" stroke-linejoin="round"/>'
+        f'<path d="{inner}" fill="none" stroke="{color}" stroke-width="1.8" stroke-linejoin="round"/>'
+    )
+    body += monogram_group(color, 196, 200, 194, "c")
+    body += f'<path fill="{color}" d="{sans.text("EST · 2026", 15, 200, 326, tracking=0.4)}"/>'
+    for x in (160, 200, 240):
+        body += f'<circle cx="{x}" cy="{74 if x == 200 else 80}" r="4" fill="{accent or color}"/>'
+    BOUNDS.clear()
+    return svg((0, 0, 400, 400), body, "FS monogram, crest")
+
+
+def mono_flag(color, accent=None):
+    """The F is a flagstick: pole, pennant for the top arm, a short middle arm."""
+    flag = accent or color
+    s_d = serif.text("S", 250, 262, 318)
+    gap = 11
+    f_parts = (
+        f'<rect x="120" y="58" width="20" height="262"/>'
+        f'<rect x="100" y="312" width="60" height="9" rx="2"/>'
+        f'<rect x="140" y="178" width="64" height="16"/>'
+    )
+    body = (
+        f'<defs><mask id="gapflag" maskUnits="userSpaceOnUse">'
+        f'<rect width="400" height="400" fill="#fff"/>'
+        f'<path d="{s_d}" fill="#000" stroke="#000" stroke-width="{gap * 2}" stroke-linejoin="round"/>'
+        f"</mask></defs>"
+        f'<g fill="{color}" mask="url(#gapflag)">{f_parts}</g>'
+        f'<path d="M140,60 Q196,66 252,86 Q196,106 140,114 Z" fill="{flag}"/>'
+        f'<path d="{s_d}" fill="{color}"/>'
+        f'<ellipse cx="130" cy="346" rx="54" ry="8" fill="{color}" opacity=".35"/>'
+    )
+    BOUNDS.clear()
+    return svg((0, 0, 400, 400), body, "FS monogram, flagstick")
+
+
+def mono_tee(color, accent=None):
+    dimples = ""
+    for ring, r, n in ((1, 150, 28), (2, 136, 24)):
+        for i in range(n):
+            a = 2 * math.pi * (i + ring * 0.5) / n
+            dimples += f'<circle cx="{200 + r * math.cos(a):.1f}" cy="{180 + r * math.sin(a):.1f}" r="3.2"/>'
+    body = (
+        f'<circle cx="200" cy="180" r="166" fill="none" stroke="{color}" stroke-width="5"/>'
+        f'<g fill="{color}" opacity=".28">{dimples}</g>'
+        f'<path d="M168,346 L232,346 L214,366 L208,398 L192,398 L186,366 Z" fill="{accent or color}"/>'
+    )
+    body += monogram_group(color, 210, 200, 176, "t")
+    BOUNDS.clear()
+    return svg((0, -2, 400, 404), body, "FS monogram, ball on tee")
+
+
 OUT.mkdir(exist_ok=True)
 write("wordmark-forest.svg", wordmark(FOREST))
 write("wordmark-cream.svg", wordmark(CREAM))
@@ -233,3 +302,7 @@ write("monogram-claret.svg", monogram(CLARET))
 write("badge-forest.svg", badge(FOREST))
 write("badge-cream.svg", badge(CREAM))
 write("favicon.svg", favicon(CREAM, FOREST))
+
+for name, fn in (("ring", mono_ring), ("crest", mono_crest), ("flag", mono_flag), ("tee", mono_tee)):
+    write(f"monogram-{name}-forest.svg", fn(FOREST, CLARET))
+    write(f"monogram-{name}-cream.svg", fn(CREAM, BLUSH))
