@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Marketing kit source — Fairway Society</title>
+  <!--
+    Source for every marketing asset. Each <section class="asset"> is drawn at its
+    exact export size; tools/build_marketing.mjs screenshots them into
+    marketing/png/<data-name>.png. Edit the copy here, then re-run the script.
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+  <style>
+    /* local copy so exports never fall back if the web font is slow */
+    @font-face { font-family: "FS Script"; src: url("../tools/fonts/GreatVibes-Regular.ttf"); }
+    @font-face { font-family: "FS Serif"; font-weight: 500; src: url("../tools/fonts/PlayfairDisplay-Medium.ttf"); }
+    @font-face { font-family: "FS Serif"; font-weight: 500; font-style: italic; src: url("../tools/fonts/PlayfairDisplay-Italic.ttf"); }
+    @font-face { font-family: "FS Serif"; font-weight: 600; src: url("../tools/fonts/PlayfairDisplay-SemiBold.ttf"); }
+    /* garments.js draws the FS mark in "Playfair Display" */
+    @font-face { font-family: "Playfair Display"; font-weight: 600; src: url("../tools/fonts/PlayfairDisplay-SemiBold.ttf"); }
+    /* only the Medium cut is bundled, so every sans weight renders from it */
+    @font-face { font-family: "FS Sans"; font-weight: 100 900; src: url("../tools/fonts/Montserrat-Medium.ttf"); }
+    :root {
+      --forest: #1f3a2b; --forest-2: #2c4f3b; --sage: #8fa88a; --sage-soft: #e4eadf;
+      --cream: #f7f1e8; --ivory: #fbf8f3; --blush: #f2d4d7; --blush-soft: #f6e7e4;
+      --rose: #c98a94; --claret: #7a2837; --ink: #1f2a24; --muted: #5f6b63;
+      --serif: "FS Serif", "Playfair Display", Georgia, serif;
+      --sans: "FS Sans", "Montserrat", system-ui, sans-serif;
+      --script: "FS Script", "Great Vibes", cursive;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 40px; background: #d9d4cb; display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start; font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; }
+    img, svg { display: block; }
+    h1, h2, h3, p { margin: 0; }
+
+    .asset { position: relative; overflow: hidden; flex: none; background: var(--cream); }
+    .feed { width: 1080px; height: 1350px; }
+    .story { width: 1080px; height: 1920px; }
+    .email { width: 1200px; height: 600px; }
+    .poster { width: 1748px; height: 2480px; }
+    .card { width: 1200px; height: 1680px; }
+    .tag { width: 700px; height: 1400px; }
+
+    .forest { background: var(--forest); color: var(--cream); }
+    .blush { background: var(--blush); }
+    .blush-soft { background: var(--blush-soft); }
+    .sage-soft { background: var(--sage-soft); }
+    .claret { background: var(--claret); color: var(--cream); }
+
+    .eyebrow { font: 500 26px/1 var(--sans); letter-spacing: .3em; text-transform: uppercase; color: var(--claret); }
+    .forest .eyebrow, .claret .eyebrow { color: var(--blush); }
+    .serif { font-family: var(--serif); font-weight: 500; color: var(--forest); line-height: 1.08; letter-spacing: -.01em; }
+    .forest .serif, .claret .serif { color: var(--cream); }
+    .script { font-family: var(--script); color: var(--claret); line-height: .9; font-weight: 400; }
+    .forest .script, .claret .script { color: var(--blush); }
+    .body { font: 400 30px/1.55 var(--sans); color: var(--muted); }
+    .forest .body, .claret .body { color: rgba(247, 241, 232, .78); }
+    .pill { display: inline-block; border-radius: 999px; padding: 26px 56px; font: 600 24px/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; background: var(--forest); color: var(--ivory); }
+    .forest .pill, .claret .pill { background: var(--cream); color: var(--forest); }
+    .rule { height: 2px; background: currentColor; opacity: .2; }
+
+    /* inset hairline frame, like a clubhouse card */
+    .frame::before { content: ""; position: absolute; inset: 36px; border: 2px solid currentColor; opacity: .22; pointer-events: none; z-index: 2; }
+    .frame.forest::before, .frame.claret::before { color: var(--cream); }
+    .frame { color: var(--forest); }
+    .forest.frame, .claret.frame { color: var(--cream); }
+
+    .center-stack { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+    .foot { position: absolute; left: 0; right: 0; bottom: 84px; display: flex; justify-content: center; align-items: center; gap: 28px; font: 500 22px/1 var(--sans); letter-spacing: .3em; text-transform: uppercase; opacity: .75; }
+    .foot i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; display: block; }
+    .garment svg { width: 100%; height: 100%; }
+    .garment { border-radius: 6px; overflow: hidden; }
+    .price { font: 500 30px/1 var(--sans); letter-spacing: .12em; color: var(--forest); }
+
+    /* stripes echo the polo tipping */
+    .tipping { display: flex; flex-direction: column; gap: 10px; }
+    .tipping span { height: 10px; display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================ FEED 4:5 -->
+
+  <!-- 1. Teaser: first post, January 2027 -->
+  <section class="asset feed forest frame" data-name="ig-01-teaser">
+    <div class="center-stack" style="gap:56px">
+      <img src="../brand/monogram-cream.svg" alt="" style="width:230px">
+      <p class="eyebrow">Something is teeing up</p>
+      <h1 class="serif" style="font-size:112px">A society<br>for the rest of us.</h1>
+      <p class="script" style="font-size:120px">February 2027</p>
+    </div>
+    <div class="foot"><span>Golf</span><i></i><span>Leisure</span><i></i><span>Connection</span></div>
+  </section>
+
+  <!-- 2. Manifesto quote -->
+  <section class="asset feed frame" data-name="ig-02-manifesto">
+    <div class="center-stack" style="padding:0 130px;gap:60px">
+      <p class="script" style="font-size:210px;line-height:.5;height:90px">“</p>
+      <h1 class="serif" style="font-size:84px;font-style:italic">The game belongs to whoever keeps showing up for it, not just whoever was born into it.</h1>
+      <div style="width:120px" class="rule"></div>
+      <p class="eyebrow" style="color:var(--forest)">Fairway Society · Est. 2026</p>
+    </div>
+  </section>
+
+  <!-- 3. Origin story -->
+  <section class="asset feed blush-soft frame" data-name="ig-03-origin">
+    <div style="position:absolute;inset:0;padding:150px 120px;display:flex;flex-direction:column;gap:44px">
+      <p class="eyebrow">Our story · Part one</p>
+      <h1 class="serif" style="font-size:104px">No membership.<br>No mentor.<br>Just a bucket<br>of range balls.</h1>
+      <p class="body" style="font-size:34px;max-width:780px">Then another, then another. Fairway Society began on the driving range, and it's made for every golfer who learned the game the same way.</p>
+      <div style="margin-top:auto;display:flex;align-items:end;justify-content:space-between">
+        <p class="script" style="font-size:96px">one round at a time</p>
+        <img src="../brand/monogram-claret.svg" alt="" style="width:120px">
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Fabric technology -->
+  <section class="asset feed sage-soft frame" data-name="ig-04-fabric">
+    <div style="position:absolute;inset:0;padding:150px 120px;display:flex;flex-direction:column">
+      <p class="eyebrow">Golf performance fabric</p>
+      <h1 class="serif" style="font-size:92px;margin-top:40px">Dressed for the clubhouse.</h1>
+      <p class="script" style="font-size:118px;line-height:1.05;margin-top:18px">Engineered for the tropics.</p>
+      <div id="fabric-list" style="margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:0 64px"></div>
+    </div>
+  </section>
+
+  <!-- 5. Product spotlight: knit polo -->
+  <section class="asset feed" data-name="ig-05-knit-polo" data-product="clubhouse-knit-polo" data-color="0">
+    <div class="garment" data-slot style="position:absolute;inset:0 0 330px 0;border-radius:0"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;height:330px;background:var(--ivory);padding:64px 90px;display:flex;justify-content:space-between;align-items:center;gap:40px">
+      <div>
+        <p class="eyebrow" data-badge></p>
+        <h2 class="serif" data-pname style="font-size:64px;margin-top:22px"></h2>
+        <p class="body" data-blurb style="margin-top:14px"></p>
+      </div>
+      <p class="price" data-price style="font-size:40px;white-space:nowrap"></p>
+    </div>
+  </section>
+
+  <!-- 6. Product spotlight: pleated skort, three colourways -->
+  <section class="asset feed frame" data-name="ig-06-skort-colourways">
+    <div style="position:absolute;inset:0;padding:130px 100px;display:flex;flex-direction:column;align-items:center;text-align:center">
+      <p class="eyebrow">The Back Nine Pleated Skort · S$85</p>
+      <h2 class="serif" style="font-size:88px;margin-top:36px">Sixteen pleats.<br>Three moods.</h2>
+      <div id="skort-trio" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:64px;width:100%"></div>
+      <p class="body" style="margin-top:44px">Built-in shorts · ball pocket · UPF 50+</p>
+    </div>
+  </section>
+
+  <!-- 7. The collection grid -->
+  <section class="asset feed forest" data-name="ig-07-collection">
+    <div style="position:absolute;inset:0;padding:96px 80px;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:end">
+        <div>
+          <p class="eyebrow">Drop 01</p>
+          <h2 class="serif" style="font-size:84px;margin-top:22px">The First Tee<br>Collection</h2>
+        </div>
+        <img src="../brand/monogram-cream.svg" alt="" style="width:110px">
+      </div>
+      <div id="collection-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:auto"></div>
+    </div>
+  </section>
+
+  <!-- 8. Waitlist call to action -->
+  <section class="asset feed blush" data-name="ig-08-waitlist">
+    <div class="center-stack" style="gap:48px;padding:0 120px">
+      <img src="../brand/badge-forest.svg" alt="" style="width:400px">
+      <h1 class="serif" style="font-size:100px">Join the Society</h1>
+      <p class="body" style="color:var(--forest);max-width:760px">Private early access to Drop 01, a first look behind the scenes and an invitation to our launch round.</p>
+      <span class="pill">Link in bio</span>
+    </div>
+  </section>
+
+  <!-- 9. Launch day -->
+  <section class="asset feed claret frame" data-name="ig-09-launch">
+    <div class="center-stack" style="gap:44px;padding:0 110px">
+      <p class="eyebrow">Now open</p>
+      <p class="script" style="font-size:190px;line-height:.8">Drop 01</p>
+      <h1 class="serif" style="font-size:88px">is on the tee.</h1>
+      <p class="body" style="max-width:740px">The First Tee Collection is live. Polos, pleats and sun layers, designed in Singapore for the love of the fairway.</p>
+      <span class="pill">Shop now</span>
+    </div>
+  </section>
+
+  <!-- ============================================================ STORIES 9:16 -->
+
+  <!-- 10. Countdown -->
+  <section class="asset story forest frame" data-name="story-01-countdown">
+    <div class="center-stack" style="gap:40px">
+      <img src="../brand/monogram-flag-cream.svg" alt="" style="width:260px">
+      <p class="eyebrow" style="margin-top:40px">Drop 01 tees off in</p>
+      <p class="serif" style="font-size:420px;line-height:.9">14</p>
+      <p class="script" style="font-size:150px">days</p>
+      <p class="body" style="margin-top:60px;max-width:700px">Waitlist members get in first. Tap the link to join the Society.</p>
+    </div>
+    <div class="foot" style="bottom:220px"><span>February 2027</span></div>
+  </section>
+
+  <!-- 11. This or that poll -->
+  <section class="asset story blush-soft" data-name="story-02-this-or-that">
+    <div style="position:absolute;inset:0;padding:220px 90px;display:flex;flex-direction:column;align-items:center;text-align:center">
+      <p class="eyebrow">Help us choose</p>
+      <h1 class="serif" style="font-size:120px;margin-top:40px">This<br><span class="script" style="font-size:1.2em">or</span> that?</h1>
+      <div id="poll-pair" style="display:grid;grid-template-columns:1fr 1fr;gap:28px;width:100%;margin-top:80px"></div>
+      <p class="body" style="margin-top:56px;color:var(--forest)">Add a poll sticker here</p>
+    </div>
+  </section>
+
+  <!-- 12. Waitlist story -->
+  <section class="asset story blush" data-name="story-03-waitlist">
+    <div class="center-stack" style="gap:56px;padding:0 110px">
+      <img src="../brand/stacked-claret.svg" alt="" style="width:720px">
+      <div style="width:140px;color:var(--claret)" class="rule"></div>
+      <p class="serif" style="font-size:84px">You don't need an invitation.<br>You just need to play.</p>
+      <p class="body" style="color:var(--forest)">Early access to Drop 01 opens to waitlist members first.</p>
+      <span class="pill" style="background:var(--claret)">Tap to join</span>
+    </div>
+  </section>
+
+  <!-- ============================================================ EMAIL -->
+
+  <!-- 13. Welcome email header -->
+  <section class="asset email forest" data-name="email-welcome-header">
+    <div style="position:absolute;inset:0;display:grid;grid-template-columns:1fr 440px">
+      <div style="padding:80px 70px;display:flex;flex-direction:column;justify-content:center;gap:26px">
+        <img src="../brand/wordmark-simple-cream.svg" alt="" style="width:330px;margin-bottom:12px">
+        <h1 class="serif" style="font-size:66px">Welcome to<br>the Society.</h1>
+        <p class="body" style="font-size:22px;max-width:520px">You're on the list for private early access to Drop 01, arriving February 2027.</p>
+      </div>
+      <div class="garment" data-product="back-nine-pleated-skort" data-color="0" data-slot style="border-radius:0"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ PRINT -->
+
+  <!-- 14. A5 waitlist poster (150 dpi) -->
+  <section class="asset poster frame" data-name="print-a5-poster">
+    <div style="position:absolute;inset:0;padding:190px 170px;display:flex;flex-direction:column;align-items:center;text-align:center">
+      <img src="../brand/wordmark-forest.svg" alt="" style="width:1100px">
+      <div id="poster-hero" style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px;width:100%;margin-top:130px"></div>
+      <h1 class="serif" style="font-size:150px;margin-top:130px">For the love<br>of the <span class="script" style="font-size:1.3em">Fairway</span></h1>
+      <p class="body" style="font-size:44px;margin-top:60px;max-width:1200px">Refined golf apparel for the new generation of golfers. Drop 01 arrives February 2027. Join the waitlist for private early access.</p>
+      <div style="margin-top:auto;display:flex;gap:40px;align-items:center;font:500 34px/1 var(--sans);letter-spacing:.3em;text-transform:uppercase;color:var(--forest)">
+        <span>Designed in Singapore</span><i style="width:12px;height:12px;border-radius:50%;background:var(--claret);display:block"></i><span>UPF 50+</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15. Thank-you card, packed with every order (5 × 7 in) -->
+  <section class="asset card blush-soft frame" data-name="print-thank-you-card">
+    <div class="center-stack" style="gap:56px;padding:0 150px">
+      <img src="../brand/monogram-crest-forest.svg" alt="" style="width:260px">
+      <p class="script" style="font-size:150px">Welcome to the Society</p>
+      <p class="body" style="font-size:36px;color:var(--ink)">Thank you for being one of the first. Every piece in Drop 01 was made for the golfer who keeps showing up: the range regular, the public-course early riser, the one who's quietly getting better.</p>
+      <p class="body" style="font-size:36px;color:var(--ink)">We'd love to see you out there. Tag us in your first round.</p>
+      <p class="script" style="font-size:110px;margin-top:20px">Cee</p>
+      <p class="eyebrow" style="color:var(--forest)">Founder · Fairway Society</p>
+    </div>
+  </section>
+
+  <!-- 16. Hang tag (2 × 4 in at 350 dpi), with swing-tag hole -->
+  <section class="asset tag forest" data-name="print-hang-tag">
+    <div style="position:absolute;top:90px;left:50%;transform:translateX(-50%);width:64px;height:64px;border-radius:50%;background:#d9d4cb;box-shadow:inset 0 0 0 6px rgba(247,241,232,.4)"></div>
+    <div style="position:absolute;inset:0;padding:240px 70px 90px;display:flex;flex-direction:column;align-items:center;text-align:center">
+      <img src="../brand/monogram-cream.svg" alt="" style="width:170px">
+      <p class="eyebrow" style="margin-top:80px;font-size:22px">Drop 01</p>
+      <p class="serif" style="font-size:58px;margin-top:24px">The First Tee<br>Collection</p>
+      <div class="tipping" style="width:220px;margin-top:70px"><span style="background:var(--blush)"></span><span style="background:var(--cream)"></span><span style="background:var(--claret)"></span></div>
+      <p class="script" style="font-size:78px;margin-top:auto">For the love<br>of the fairway</p>
+      <p style="font:500 18px/1 var(--sans);letter-spacing:.3em;text-transform:uppercase;margin-top:60px;opacity:.7">Designed in Singapore</p>
+    </div>
+  </section>
+
+  <script src="../assets/js/garments.js"></script>
+  <script src="../assets/js/products.js"></script>
+  <script>
+    const art = (id, c = 0, bg) => {
+      const p = getProduct(id);
+      const cw = p.colors[c];
+      return garmentSVG(p.type, cw, bg === undefined ? cw.bg : bg);
+    };
+    const tile = (id, c, extra = "") =>
+      `<div class="garment" style="aspect-ratio:4/5;${extra}">${art(id, c)}</div>`;
+
+    // product spotlights driven by products.js, so prices and names stay in sync
+    document.querySelectorAll("[data-product]").forEach((el) => {
+      const p = getProduct(el.dataset.product);
+      const c = Number(el.dataset.color || 0);
+      const slot = el.hasAttribute("data-slot") ? el : el.querySelector("[data-slot]");
+      slot.innerHTML = art(p.id, c);
+      const set = (k, v) => { const n = el.querySelector(`[data-${k}]`); if (n) n.textContent = v; };
+      set("pname", p.name);
+      set("blurb", p.blurb);
+      set("price", `S$${p.price}`);
+      set("badge", p.badge ? `${p.badge} · ${p.colors[c].name}` : p.colors[c].name);
+    });
+
+    const skort = getProduct("back-nine-pleated-skort");
+    document.getElementById("skort-trio").innerHTML = skort.colors
+      .map((cw, i) => `<div>${tile(skort.id, i)}<p class="eyebrow" style="color:var(--forest);font-size:20px;margin-top:22px">${cw.name}</p></div>`)
+      .join("");
+
+    document.getElementById("collection-grid").innerHTML = [
+      ["clubhouse-knit-polo", 0], ["back-nine-pleated-skort", 0], ["dawn-patrol-quarter-zip", 1],
+      ["members-polo-dress", 0], ["range-day-cable-vest", 0], ["society-cap", 2],
+    ].map(([id, c]) => tile(id, c)).join("");
+
+    document.getElementById("poll-pair").innerHTML = [["scorecard-wrap-skort", 0], ["scorecard-wrap-skort", 1]]
+      .map(([id, c]) => `<div>${tile(id, c, "border-radius:10px")}<p class="eyebrow" style="color:var(--forest);font-size:24px;margin-top:26px">${getProduct(id).colors[c].name}</p></div>`)
+      .join("");
+
+    document.getElementById("poster-hero").innerHTML = [
+      ["clubhouse-knit-polo", 0], ["back-nine-pleated-skort", 1], ["dawn-patrol-quarter-zip", 0],
+    ].map(([id, c]) => tile(id, c)).join("");
+
+    document.getElementById("fabric-list").innerHTML = [
+      ["UPF 50+", "Blocks 98% of UV rays"], ["Moisture-wicking", "Composed in the humidity"],
+      ["4-way stretch", "Moves with a full swing"], ["Breathable", "Light, all day long"],
+      ["Quick-dry", "Ready for the next round"], ["Anti-odour", "Fresh to the last drink"],
+    ].map(([h, s]) => `<div style="border-top:2px solid rgba(31,58,43,.18);padding:30px 0 32px">
+        <p class="serif" style="font-size:44px">${h}</p><p class="body" style="font-size:26px;margin-top:6px">${s}</p></div>`).join("");
+
+    Promise.all(['100px "FS Script"', '500 40px "FS Serif"', 'italic 500 40px "FS Serif"', '600 40px "FS Serif"', '500 20px "FS Sans"'].map((f) => document.fonts.load(f)))
+      .then(() => document.fonts.ready).then(() => document.body.setAttribute("data-ready", ""));
+  </script>
+</body>
+</html>

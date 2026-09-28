@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Marketing Kit — Fairway Society</title>
+  <meta name="description" content="Social posts, stories, email and print pieces for the Drop 01 launch, with captions and a posting plan.">
+  <link rel="icon" href="brand/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-page="marketing">
+  <header id="site-header"></header>
+
+  <main class="wrap">
+    <section class="story-hero">
+      <p class="eyebrow">Marketing kit · Drop 01</p>
+      <h1>Ready to post, print and send</h1>
+      <p>Sixteen launch pieces in the Fairway Society look, each with its caption and a slot in the posting plan. Tap any image to download it at full size.</p>
+    </section>
+
+    <section class="section" style="padding-top:0">
+      <div class="section-head"><div><p class="eyebrow">The plan</p><h2>Five weeks to launch day</h2></div></div>
+      <p class="muted" style="max-width:44em;margin-bottom:28px">Days are counted back from launch day (L), so the plan still works once the exact February date is set. It follows the Teaser → Pre-launch → Launch stages on the <a class="link" href="story.html">Our Story</a> timeline.</p>
+      <div class="plan" id="plan"></div>
+    </section>
+
+    <section class="section" style="padding-top:0" id="assets"></section>
+
+    <section class="section" style="padding-top:0">
+      <div class="section-head"><div><p class="eyebrow">Copy bank</p><h2>Words to reuse</h2></div></div>
+      <div class="copy-grid" id="copy-bank"></div>
+    </section>
+
+    <section class="section" style="padding-top:0">
+      <div class="rules">
+        <div class="rule-card"><h3>Before posting</h3><ul>
+          <li>Swap the garment illustrations for campaign photos once they're shot. The layouts in <code>marketing/kit.html</code> take a photo in the same slot.</li>
+          <li>Add the real Instagram handle and waitlist link wherever a caption says “link in bio”.</li>
+          <li>Put the poll sticker on the “This or that?” story inside Instagram.</li>
+          <li>Print the poster at A5, the thank-you card at 5 × 7 in and the hang tag at 2 × 4 in.</li>
+        </ul></div>
+        <div class="rule-card"><h3>Keep it on brand</h3><ul>
+          <li>Warm, quietly confident, never exclusive. The society is earned by playing, not by who you know.</li>
+          <li>Use the script for short accents only: a date, a sign-off, a single phrase.</li>
+          <li>Spell the Singapore way: colour, odour, favourite.</li>
+          <li>Prices in S$. Only claim what the fabric does: UPF 50+, moisture-wicking, 4-way stretch.</li>
+        </ul></div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="assets/js/garments.js"></script>
+  <script src="assets/js/products.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+    const TAGS = "#FairwaySociety #ForTheLoveOfTheFairway #SingaporeGolf #SGGolf #WomensGolf #GolfStyle #GolfFashion";
+
+    const GROUPS = [
+      {
+        id: "feed", eyebrow: "Instagram feed · 1080 × 1350", title: "Feed posts", ratio: "4 / 5",
+        items: [
+          { name: "ig-01-teaser", title: "Teaser", when: "L−35", caption: `Something is teeing up. 🏌️‍♀️\n\nA golf apparel label for the self-taught, the public-course regular and the one who's quietly getting better. Designed in Singapore.\n\nDrop 01 · February 2027.\n\n${TAGS}` },
+          { name: "ig-02-manifesto", title: "Manifesto", when: "L−32", caption: `The game belongs to whoever keeps showing up for it, not just whoever was born into it.\n\nThat's the belief Fairway Society is built on. No invitation needed. You just need to play.\n\n${TAGS}` },
+          { name: "ig-03-origin", title: "Origin story", when: "L−28", caption: `No membership. No mentor. No one to call for a Saturday tee time.\n\nJust a bucket of range balls, then another, then another. Every round since has been a lesson, and every pairing has taught us something the books don't.\n\nFairway Society is for everyone who learned the game that way. Full story at the link in bio.\n\n${TAGS}` },
+          { name: "ig-08-waitlist", title: "Join the waitlist", when: "L−25", caption: `The Society is open for early access.\n\nJoin the waitlist for a private first look at Drop 01, behind-the-scenes updates and an invitation to our launch round. Link in bio.\n\n${TAGS}` },
+          { name: "ig-04-fabric", title: "Fabric technology", when: "L−21", caption: `Dressed for the clubhouse. Engineered for the tropics.\n\n☀️ UPF 50+ blocks 98% of UV rays\n💧 Moisture-wicking and quick-dry\n↔️ 4-way stretch for a full swing\n🌿 Breathable and anti-odour\n\nMade for humid afternoons on Singapore fairways.\n\n${TAGS}` },
+          { name: "ig-05-knit-polo", title: "Spotlight: Knit Polo", when: "L−17", caption: `Meet The Clubhouse Knit Polo. S$89.\n\nOur take on the heritage clubhouse knit: soft rib, contrast tipping, an embroidered FS crest and a slightly cropped fit that sits at the waist of a pleated skort. In Blush, Cream and Claret.\n\nDrop 01 · February 2027.\n\n${TAGS}` },
+          { name: "ig-06-skort-colourways", title: "Spotlight: Pleated Skort", when: "L−12", caption: `Sixteen pleats. Three moods. Which one's yours?\n\nThe Back Nine Pleated Skort, S$85. Built-in shorts, a hidden ball pocket and UPF 50+, in White / Blush, Claret and Sage.\n\nTell us in the comments 👇\n\n${TAGS}` },
+          { name: "ig-07-collection", title: "The full collection", when: "L−3", caption: `The First Tee Collection. Nine pieces for the course and the drinks afterwards.\n\nPolos, pleats, a polo dress, a sun layer, a cable vest, a cap and a visor. From S$39.\n\nWaitlist members shop first. Link in bio.\n\n${TAGS}` },
+          { name: "ig-09-launch", title: "Launch day", when: "L", caption: `Drop 01 is on the tee. ⛳\n\nThe First Tee Collection is live. Thank you for showing up, from the first range bucket to today.\n\nFree delivery in Singapore on orders over S$100. Shop at the link in bio.\n\n${TAGS}` },
+        ],
+      },
+      {
+        id: "stories", eyebrow: "Instagram stories · 1080 × 1920", title: "Stories", ratio: "9 / 16",
+        items: [
+          { name: "story-03-waitlist", day: "L−25", title: "Waitlist story", when: "L−25, then weekly", caption: "Add a link sticker to the waitlist over the button." },
+          { name: "story-02-this-or-that", title: "This or that poll", when: "L−19", caption: "Add a poll sticker: “White / Forest” vs “White / Claret”. Share the result the next day." },
+          { name: "story-01-countdown", title: "Countdown", when: "L−14", caption: "Add Instagram's countdown sticker set to launch day so followers get a reminder." },
+        ],
+      },
+      {
+        id: "email", eyebrow: "Email · 1200 × 600", title: "Email", ratio: "2 / 1", wide: true,
+        items: [
+          { name: "email-welcome-header", day: "Signup", title: "Welcome email header", when: "On waitlist signup", caption: `Subject: Welcome to the Society\nPreview: Your early access to Drop 01 is saved.\n\nHi {first name},\n\nThank you for joining the Fairway Society waitlist. You'll get private early access to Drop 01 before it opens to everyone in February 2027, plus a first look behind the scenes as the collection comes together.\n\nWe started on the driving range, one bucket at a time, and we're building this for every golfer who keeps showing up. We're glad you're here.\n\nSee you on the fairway,\nCee\nFounder, Fairway Society` },
+        ],
+      },
+      {
+        id: "print", eyebrow: "Print · packaging and events", title: "Print", ratio: "auto",
+        items: [
+          { name: "print-a5-poster", day: "L−21", title: "A5 poster", when: "Driving ranges, pro shops, cafés", caption: "A5 at 150 dpi (1748 × 2480 px). Add a QR code to the waitlist in the lower margin before printing." },
+          { name: "print-thank-you-card", day: "L", title: "Thank-you card", when: "In every order", caption: "5 × 7 in at 240 dpi. Signed by the founder; tuck it on top of the tissue paper." },
+          { name: "print-hang-tag", day: "L", title: "Hang tag", when: "On every Drop 01 piece", caption: "2 × 4 in at 350 dpi. Print the price and size sticker on the back." },
+        ],
+      },
+    ];
+
+    const COPY = [
+      { title: "Instagram bio", text: "Refined golf apparel for the new generation of golfers ⛳\nDesigned in Singapore · UPF 50+\nDrop 01 · February 2027\nJoin the Society ↓" },
+      { title: "Taglines", text: "For the love of the fairway.\nA society you earn your way into, one round at a time.\nDressed for the clubhouse. Engineered for the tropics.\nYou don't need an invitation. You just need to play.\nGolf · Leisure · Connection" },
+      { title: "Hashtags", text: TAGS },
+      { title: "Email subject lines", text: "Welcome to the Society\nA first look at Drop 01\nSixteen pleats, three moods\n14 days to the first tee\nYour early access starts now\nDrop 01 is on the tee" },
+      { title: "One-line pitch", text: "Fairway Society makes refined golf apparel for the new generation of golfers: clubhouse elegance, performance fabrics made for the tropics, and a society you earn your way into, one round at a time." },
+      { title: "Ambassador outreach DM", text: "Hi {name}, we love how you play and how you show up for the game. We're Fairway Society, a Singapore golf apparel label launching our first collection in February 2027. We'd love to send you a piece from Drop 01 before it's public, no strings attached. Could we get your size and a delivery address?" },
+    ];
+
+    const file = (n) => `marketing/png/${n}.png`;
+    const copyBtn = (text) => `<button class="btn btn-ghost copy-btn" data-copy="${esc(text)}">Copy</button>`;
+
+    document.getElementById("assets").innerHTML = GROUPS.map((g) => `
+      <div class="kit-group" id="${g.id}">
+        <div class="section-head"><div><p class="eyebrow">${g.eyebrow}</p><h2>${g.title}</h2></div></div>
+        <div class="kit-grid${g.wide ? " wide" : ""}">
+          ${g.items.map((it) => `
+            <figure class="kit-card">
+              <a class="kit-img" href="${file(it.name)}" download title="Download ${esc(it.title)}">
+                <img src="${file(it.name)}" alt="${esc(it.title)}" loading="lazy">
+              </a>
+              <figcaption>
+                <div class="kit-meta"><strong>${esc(it.title)}</strong><span>${esc(it.when)}</span></div>
+                <p class="kit-caption">${esc(it.caption)}</p>
+                <div class="kit-actions">${copyBtn(it.caption)}<a class="btn" href="${file(it.name)}" download>Download</a></div>
+              </figcaption>
+            </figure>`).join("")}
+        </div>
+      </div>`).join("");
+
+    const all = GROUPS.flatMap((g) => g.items.map((it) => ({ ...it, group: g.title })));
+    const stages = [
+      ["Teaser", "L−35 to L−25", ["ig-01-teaser", "ig-02-manifesto", "ig-03-origin", "ig-08-waitlist", "story-03-waitlist", "email-welcome-header"]],
+      ["Pre-launch", "L−21 to L−3", ["ig-04-fabric", "print-a5-poster", "story-02-this-or-that", "ig-05-knit-polo", "story-01-countdown", "ig-06-skort-colourways", "ig-07-collection"]],
+      ["Launch", "L and after", ["ig-09-launch", "print-thank-you-card", "print-hang-tag"]],
+    ];
+    document.getElementById("plan").innerHTML = stages.map(([name, range, names], i) => `
+      <div class="milestone${i === 0 ? " now" : ""}">
+        <time>${range}</time><h3>${name}</h3>
+        <ul>${names.map((n) => all.find((a) => a.name === n)).map((a) => `<li><span>${esc(a.day || a.when)}</span>${esc(a.title)}</li>`).join("")}</ul>
+      </div>`).join("");
+
+    document.getElementById("copy-bank").innerHTML = COPY.map((c) => `
+      <div class="copy-card"><div class="kit-meta"><strong>${esc(c.title)}</strong>${copyBtn(c.text)}</div><p class="kit-caption">${esc(c.text)}</p></div>`).join("");
+
+    document.addEventListener("click", async (e) => {
+      const b = e.target.closest("[data-copy]");
+      if (!b) return;
+      try {
+        await navigator.clipboard.writeText(b.dataset.copy);
+        toast("Copied to clipboard");
+      } catch {
+        toast("Couldn't copy. Select the text and copy it instead.");
+      }
+    });
+  </script>
+</body>
+</html>

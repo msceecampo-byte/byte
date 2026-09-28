@@ -83,7 +83,7 @@ function renderChrome() {
       </div>
       <div>
         <h4>Society</h4>
-        <a href="story.html">Our Story</a><a href="brand.html">Brand</a><a href="index.html#join">Join the waitlist</a>
+        <a href="story.html">Our Story</a><a href="brand.html">Brand</a><a href="marketing.html">Marketing kit</a><a href="index.html#join">Join the waitlist</a>
       </div>
       <div>
         <h4>Help</h4>

@@ -18,6 +18,7 @@ python3 -m http.server 8000
 | `product.html?id=…` | Product page: colour swatches, sizes, add to bag, details |
 | `story.html` | Brand story, launch timeline and founder quote |
 | `brand.html` | Brand guide: logo before/after, logo files, palette, type, do's and don'ts |
+| `marketing.html` | Marketing kit: Drop 01 posting plan, 16 downloadable assets with captions, and a copy bank |
 
 The bag is saved in the browser. Checkout shows a "opens February 2027" message with a waitlist signup, because this is the design-first step before moving onto Shopify.
 
@@ -45,6 +46,19 @@ python3 tools/build_logos.py
 ```
 
 The fonts in `tools/fonts` (Great Vibes, Playfair Display, Montserrat) are from Google Fonts under the SIL Open Font License and are free for commercial use.
+
+## Marketing kit
+
+`marketing.html` lists every launch asset with its caption and when to post it. The images in `marketing/png/` are exported from `marketing/kit.html`, where each asset is drawn at its exact size (Instagram 1080×1350 and 1080×1920, email 1200×600, A5 poster, 5×7 in thank-you card, 2×4 in hang tag). Product names, prices and illustrations come from `products.js`, so they stay in sync.
+
+To change an asset, edit `marketing/kit.html` and re-export:
+
+```
+npm i -g playwright
+node tools/build_marketing.mjs
+```
+
+The export uses the fonts in `tools/fonts`. Only Montserrat Medium is bundled, so all sans text in the exports is set in that weight.
 
 ## Next steps toward the Shopify launch
 

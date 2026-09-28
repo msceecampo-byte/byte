@@ -319,3 +319,28 @@ details ul { padding-left: 18px; }
 .mono-small img { width: auto; }
 .mono figcaption { padding: 14px 16px 18px; font-size: 0.84rem; color: var(--muted); }
 .mono figcaption strong { display: block; font-family: var(--serif); font-weight: 500; font-size: 1.05rem; color: var(--forest); }
+
+/* marketing kit */
+.plan { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+@media (max-width: 760px) { .plan { grid-template-columns: 1fr; } }
+.plan ul { list-style: none; padding: 0; margin: 12px 0 0; font-size: 0.88rem; }
+.plan li { display: flex; gap: 12px; padding: 6px 0; border-top: 1px solid var(--line); }
+.plan li span { flex: none; width: 4.5em; color: var(--claret); font-size: 0.78rem; font-weight: 500; padding-top: 1px; }
+.kit-group + .kit-group { margin-top: clamp(48px, 7vw, 88px); }
+.kit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
+.kit-grid.wide { grid-template-columns: minmax(0, 720px); }
+@media (max-width: 1000px) { .kit-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) { .kit-grid { grid-template-columns: 1fr; } }
+.kit-card, .copy-card { margin: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--ivory); overflow: hidden; }
+.kit-img { display: block; background: #e9e3d8; }
+.kit-img img { width: 100%; height: auto; }
+.kit-card figcaption, .copy-card { padding: 16px 18px 18px; }
+.kit-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.kit-meta strong { font-family: var(--serif); font-weight: 500; font-size: 1.1rem; color: var(--forest); }
+.kit-meta span { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--claret); font-weight: 600; text-align: right; }
+.kit-caption { white-space: pre-line; font-size: 0.84rem; color: var(--muted); margin: 10px 0 0; max-height: 11.5em; overflow: auto; }
+.kit-actions { display: flex; gap: 8px; margin-top: 14px; }
+.kit-actions .btn, .copy-btn { padding: 10px 18px; font-size: 0.66rem; }
+.copy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 1000px) { .copy-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) { .copy-grid { grid-template-columns: 1fr; } }
