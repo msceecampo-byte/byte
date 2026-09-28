@@ -16,7 +16,7 @@ python3 -m http.server 8000
 | `index.html` | Home: hero, featured pieces, fabric features, story teaser, waitlist |
 | `shop.html` | Collection with category filters and sort (`?c=men` shows the menswear "coming soon" page) |
 | `product.html?id=…` | Product page: colour swatches, sizes, add to bag, details |
-| `story.html` | Brand story, launch timeline and founder quote |
+| `story.html` | Brand story, launch timeline, and founder section with portrait and photo strip (`assets/img/founder/`) |
 | `brand.html` | Brand guide: logo before/after, logo files, palette, type, do's and don'ts |
 
 The bag is saved in the browser. Checkout shows a "opens February 2027" message with a waitlist signup, because this is the design-first step before moving onto Shopify.
