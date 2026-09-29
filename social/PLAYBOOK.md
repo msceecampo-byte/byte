@@ -2,11 +2,15 @@
 
 A personal creator account about a millennial in hotel sales teaching herself golf. It builds an audience, earns from brand work and affiliate links, and becomes the launch channel for Fairway Society in February 2027.
 
+> **Keep the brand secret until January 2027.** Don't mention Fairway Society, the waitlist or `@fairwaysociety` on the personal account before then. In January, announce the brand to an audience that already trusts you (see section 9).
+
 **At a glance**
 
 | | |
 | --- | --- |
 | Account type | Personal creator account (not the brand account) |
+| Starting point | 1,500+ followers on Instagram. TikTok and Facebook are private for now and go public at launch (see section 1). |
+| Golf level | 2 years of self-teaching, scoring about 120 per round, no official handicap yet |
 | Audience | Global, mostly women, open to everyone |
 | Style | Faceless for now: voiceover, hands, outfits, POV shots. Face reveal later, planned as a milestone. |
 | Platforms | TikTok (growth), Instagram (brand deals), Facebook Reels (reach and payouts) |
@@ -26,25 +30,62 @@ What makes this account different from other golf accounts:
 2. **Golf is a work skill for her.** In hotel sales, client entertainment is part of the job, so the golf has a real reason behind it.
 3. **She works in hospitality.** She can talk about golf travel, golf hotels and business trips from the inside. Global viewers care about this, and travel brands pay well for it.
 
-### Handle ideas (check availability on all three platforms)
+### Handle ideas
 
+Search each handle on Instagram, TikTok and Facebook, and choose one that's free on all three. Aim for no more than 20 characters, no numbers unless they mean something, and nothing that ties you to your employer or to hotels (you might change jobs).
+
+**Work + golf (the main angle, and the strongest for brand deals):**
 - `@fairwayafter6`
+- `@golfafter6pm`
 - `@closedonthe18th`
-- `@thecorporategolfgirl`
-- `@ceeonthefairway`
+- `@clientsandclubs`
+- `@deskdrivetee` (desk to driver to tee)
+- `@teetimeafterwork`
+- `@outofofficeongolf`
+- `@9to5to18` (the working day, then 18 holes)
 
-Choose one handle and use it on all three platforms.
+**Corporate girl identity (strongest for a mostly-female audience):**
+- `@thecorporategolfgirl`
+- `@corporategolfgirl`
+- `@thegolfingsaleswoman`
+- `@blazerandgolfglove`
+- `@heelstocleats`
+
+**Beginner journey (built around the Road to 100 series):**
+- `@breaking100withcee`
+- `@thebeginnerbirdie`
+- `@selftaughtfairway`
+- `@hackerincheels` (a "hacker" is golf slang for a beginner)
+
+**Your name (the most flexible, because it lasts after the series or a job change):**
+- `@ceeonthefairway`
+- `@ceegolfs`
+- `@ceecampogolf`
+- `@teeswithcee`
+
+**Recommendation:** use `@ceeonthefairway` or `@fairwayafter6`. Neither depends on your current score or employer, and both sit naturally next to `@fairwaysociety` in January. Avoid names built on "breaking 100", which stop fitting once you break it.
 
 ### Bio
 
 ```
 Hotel sales by day ⛳ golf by 6pm
 Self-taught · shooting 120 → breaking 100
-Building @fairwaysociety · Feb '27
-↓ outfits, gear & waitlist
+Corporate girl learning the game in public
+↓ my outfits, gear & golf finds
 ```
 
-The link in the bio goes to one link page (Linktree, Beacons or Stan) with the Fairway Society waitlist, affiliate shop and a "work with me" email.
+The link in the bio goes to one link page (Linktree, Beacons or Stan) with your affiliate shop and a "work with me" email. From January 2027, add `Building @fairwaysociety` to the bio and put the waitlist at the top of the link page.
+
+### Going public: switching your existing accounts
+
+Keep the 1,500 Instagram followers. You don't need to start a fresh account. Recommendations now show your reels mostly to people who don't follow you yet, so starting from your existing account doesn't hold you back. Do this before your first reel:
+
+1. **Clean up the old content first.** Archive (don't delete) old personal posts that don't fit the new theme, and anything showing your workplace, uniform, name badge, colleagues or clients. Check your tagged photos too.
+2. **Switch Instagram to a Creator account** (Settings → Account type and tools). This gives you analytics and the branded-content tools. Stay on *Creator*, not *Business*, so you keep access to trending music.
+3. **Change the handle and display name** on all three platforms to the handle you choose. Put a keyword in the display name for search, e.g. `Cee | Corporate Golf Girl`.
+4. **Make TikTok and Facebook public,** and on Facebook turn on Professional mode on your profile so your reels can be recommended and you get analytics.
+5. **Post 3 reels before you announce it.** Then post one Story to your current followers: "I'm turning this into a golf account. Stay if you're into it!" Some friends will unfollow, which is fine: your engagement rate gets better.
+6. **Pin 3 reels to the top of your profile:** "Why I learned golf" (#7), the Road to 100 launch (#14) and your best-performing reel.
 
 ---
 
@@ -54,10 +95,10 @@ The link in the bio goes to one link page (Linktree, Beacons or Stan) with the F
 | --- | --- | --- | --- |
 | A | **Office → Fairway**: outfits, bags, 6pm transitions | 25% | Visual, easy to film without showing your face, and the easiest pillar to earn from with fashion affiliate links |
 | B | **Golf is a sales tool**: client golf, etiquette, networking | 20% | People share it ("send to your coworker"), and it's your real expertise |
-| C | **Road to 100**: learning in public | 20% | A series gives viewers a reason to come back |
+| C | **Road to 100**: learning in public | 25% | A series gives viewers a reason to come back |
 | D | **Corporate girl humour**: POV text and voiceover | 15% | The pillar most likely to go viral and bring in new followers |
 | E | **Golf travel & hotels**: insider tips | 15% | Global appeal, and hotel and travel brands pay well |
-| F | **Building Fairway Society**: behind the scenes | 5% now, 30% from Jan 2027 | Turns followers into customers |
+| F | **Building Fairway Society**: behind the scenes | 0% until January 2027, then 30% | Turns followers into customers. Kept secret until the January reveal. |
 
 ---
 
@@ -111,6 +152,19 @@ Each idea lists the hook (said in the first 1–2 seconds and shown on screen), 
 13. **"Golf small talk that isn't about golf."**
 
 ### C. Road to 100 (weekly series, every Wednesday)
+
+**Where you're starting:** 2 years of self-teaching, scoring about **120 per 18-hole round**. That's your *score*, not a handicap. Handicap indexes top out at 54, and you don't have an official one yet, which is also content: getting one is a milestone episode.
+
+**How the series works:**
+- **Same title card every week:** "Road to 100 · Week X · Last score: ___". Viewers follow the number.
+- **Show the scorecard every time,** even on bad weeks. Bad weeks often perform best ("shot 128, here's what went wrong").
+- **Keep a written log:** date, course or range, score, number of putts, number of lost balls, one thing that worked. It makes the weekly reel quick to script.
+- **Milestone episodes** (post these as extra reels on top of the weekly one):
+  - First round under 115, then under 110, then under 105
+  - Getting your first official handicap (register through a club or your national golf association under the World Handicap System)
+  - **Breaking 100:** the finale. Film every round once you get close, so you have footage of the shot that did it.
+- **After breaking 100,** the series becomes "Road to 90". The audience comes with you.
+
 14. **"I shoot 120. Follow me until I break 100."** The series launch. *Pin this.*
 15. **"Road to 100, week X: what I practised and my score."** Shows the scorecard every week.
 16. **"The drill that took 10 strokes off my game."**
@@ -132,8 +186,8 @@ Each idea lists the hook (said in the first 1–2 seconds and shown on screen), 
 28. **"Day trip from Singapore to play golf in [Bintan / Johor]: full cost breakdown."**
 29. **"Things hotel staff notice when golfers check in."**
 
-### F. Building Fairway Society
-30. **"I'm starting a golf apparel brand for women like me. Day 1."** Shows the logo process and your sketches from `brand.html`.
+### F. Building Fairway Society (January 2027 onwards only)
+30. **"I've been hiding something from you for 4 months."** The brand reveal: shows the logo process and your sketches from `brand.html`. Save this for January 2027 (see section 9).
 
 ---
 
@@ -221,4 +275,22 @@ Make more of the top 2 reels each week (same format, new topic) and stop the bot
 - **Your employer:** read your company's social media policy. Never name your employer, clients or deal details, and anonymise every storytime. Hotel collaborations with competitors of your employer could be a conflict of interest, so check before you accept one.
 - **Disclosing paid posts:** turn on the platform's "paid partnership" or branded-content label and add `#ad` on every paid post. Follow Singapore's ASAS guidelines on influencer marketing, and the rules of your audience's countries.
 - **Music:** Instagram and Facebook business accounts only get the commercial music library. Use a *personal creator* account and trending audio from inside each app, not uploaded songs.
-- **Brand accounts:** keep the personal account and `@fairwaysociety` separate, and tag the brand account in pillar F content.
+- **Brand accounts:** keep the personal account and `@fairwaysociety` separate. Don't mention or tag the brand until January 2027, then tag it in every pillar F reel.
+
+---
+
+## 9. January 2027: revealing Fairway Society
+
+For four months, followers have watched you get dressed for the office and the range. In January you tell them you've been designing the clothes you wished existed. This matches the "Teaser" and "Pre-launch" steps of the launch timeline in `story.html`.
+
+**Until then (October to December):**
+- Don't post the brand, logo, samples or supplier trips. Film them anyway and save the footage for the reveal.
+- In outfit reels, point out what's missing from women's golf clothes (pockets, fabrics that work in humid heat, polos that go from office to course). This sets up the brand without naming it.
+- Collect comments where followers complain about golf clothes. Those become your reveal script.
+
+**January 2027:**
+1. **Week 1:** Teaser reels: "I've been hiding something." Footage of sketches and fabric close-ups, no logo yet.
+2. **Week 2:** The reveal (#30): the story behind Fairway Society, the logo, "join the waitlist". Update the bio and link page the same day.
+3. **Weeks 3–4:** Behind the scenes: sample try-ons, choosing colours, and a poll: "which colour should we make first?"
+4. **Late January:** Early access for the waitlist, and a first look at the campaign photos.
+5. **February:** Launch.
