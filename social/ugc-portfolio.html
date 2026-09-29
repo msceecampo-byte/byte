@@ -1,0 +1,361 @@
+<title>The Corporate Golf Girl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single column like a yardage book; the rate card is set as a golf scorecard. */
+:root {
+  --bg: #F1F4F0;
+  --paper: #FFFFFF;
+  --ink: #16211B;
+  --muted: #56655C;
+  --line: #D5DDD6;
+  --fairway: #2E6A45;
+  --flag: #C8385E;
+  --tint: #E4EDE5;
+  --display: "Young Serif", Georgia, "Times New Roman", serif;
+  --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1612; --paper: #16201A; --ink: #E7EEE8; --muted: #9DAEA3;
+    --line: #2A3830; --fairway: #74C492; --flag: #F07C9B; --tint: #1C2A22;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1612; --paper: #16201A; --ink: #E7EEE8; --muted: #9DAEA3;
+  --line: #2A3830; --fairway: #74C492; --flag: #F07C9B; --tint: #1C2A22;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--body); font-size: 16px; line-height: 1.6;
+  padding-inline: 20px; padding-block: 0 64px;
+}
+.wrap { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 72px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.15; text-wrap: balance; margin: 0; }
+p { margin: 0; }
+.label {
+  font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Top bar */
+.top {
+  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding-block: 20px; border-bottom: 1px solid var(--line);
+}
+.handle { font-family: var(--display); font-size: 20px; }
+.handle span { color: var(--flag); }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: end; }
+.hero > * { min-width: 0; }
+.hero h1 { font-size: clamp(36px, 6vw, 60px); letter-spacing: -.01em; }
+.hero h1 em { font-style: normal; color: var(--fairway); }
+.hero .lede { margin-top: 20px; font-size: 18px; color: var(--muted); max-width: 34em; }
+.actions { margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap; }
+.btn {
+  font: 600 15px var(--body); border-radius: 999px; padding: 12px 22px; cursor: pointer;
+  border: 1.5px solid var(--ink); background: var(--ink); color: var(--bg); text-decoration: none;
+}
+.btn.ghost { background: transparent; color: var(--ink); }
+.btn:focus-visible, a:focus-visible { outline: 3px solid var(--flag); outline-offset: 3px; }
+
+/* Yardage-style fact list */
+.facts { border-top: 2px solid var(--ink); }
+.facts div {
+  display: flex; justify-content: space-between; gap: 16px;
+  padding-block: 11px; border-bottom: 1px solid var(--line);
+}
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; font-family: var(--mono); font-size: 14px; text-align: right; font-variant-numeric: tabular-nums; }
+.facts .score { color: var(--flag); }
+
+/* Section headings */
+.sec-head { display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; max-width: 40em; }
+.sec-head h2 { font-size: clamp(28px, 4vw, 38px); }
+.sec-head p { color: var(--muted); }
+
+/* Samples: phone-shaped frames */
+.samples { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.sample { display: flex; flex-direction: column; gap: 12px; }
+.frame {
+  aspect-ratio: 9 / 16; max-width: 100%; border-radius: 22px; position: relative; overflow: hidden;
+  background: var(--tint); border: 1px solid var(--line);
+  display: flex; flex-direction: column; justify-content: space-between; padding: 18px;
+}
+.frame::before {
+  content: ""; position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, transparent 0 22px, color-mix(in srgb, var(--fairway) 7%, transparent) 22px 44px);
+}
+.frame > * { position: relative; }
+.hook {
+  font-family: var(--display); font-size: 20px; line-height: 1.25;
+  background: var(--paper); color: var(--ink); padding: 10px 12px; border-radius: 10px;
+}
+.frame .status { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.sample h3 { font-size: 20px; }
+.sample p { color: var(--muted); font-size: 15px; }
+
+/* Formats */
+.formats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 2px solid var(--ink); }
+.formats div { padding: 20px 20px 22px 0; border-bottom: 1px solid var(--line); }
+.formats h3 { font-size: 19px; margin-bottom: 6px; }
+.formats p { color: var(--muted); font-size: 15px; }
+
+/* Fit */
+.fit { display: flex; flex-wrap: wrap; gap: 10px; }
+.fit span {
+  border: 1.5px solid var(--fairway); color: var(--fairway); border-radius: 999px;
+  padding: 7px 16px; font-weight: 600; font-size: 15px;
+}
+.why { margin-top: 28px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+.why h3 { font-size: 19px; margin-bottom: 6px; }
+.why p { color: var(--muted); font-size: 15px; }
+
+/* Scorecard rate card */
+.card-scroll { overflow-x: auto; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 6px; }
+table.scorecard { width: 100%; border-collapse: collapse; min-width: 620px; font-variant-numeric: tabular-nums; }
+.scorecard th, .scorecard td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+.scorecard th {
+  font: 500 12px var(--mono); letter-spacing: .12em; text-transform: uppercase;
+  background: var(--fairway); color: var(--paper);
+}
+.scorecard td.hole { font-family: var(--mono); color: var(--muted); width: 56px; }
+.scorecard td.name { font-weight: 700; }
+.scorecard td.price { font-family: var(--mono); font-size: 18px; white-space: nowrap; }
+.scorecard td.price small { display: block; font-size: 12px; color: var(--muted); }
+.scorecard tr.pick td { background: color-mix(in srgb, var(--flag) 9%, var(--paper)); }
+.scorecard tr.pick .name::after {
+  content: "Best value"; margin-left: 10px; font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--flag); border: 1px solid var(--flag); border-radius: 4px; padding: 2px 6px; vertical-align: 2px;
+}
+.addons { margin-top: 24px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 40px; }
+.addons div { display: flex; justify-content: space-between; gap: 16px; padding-block: 10px; border-bottom: 1px dashed var(--line); }
+.addons dd { margin: 0; font-family: var(--mono); font-size: 14px; white-space: nowrap; }
+.fineprint { margin-top: 16px; font-size: 14px; color: var(--muted); }
+
+/* Process */
+.steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; counter-reset: step; }
+.steps li { counter-increment: step; border-top: 2px solid var(--ink); padding-top: 12px; }
+.steps li::before { content: "0" counter(step); font-family: var(--mono); font-size: 13px; color: var(--flag); display: block; margin-bottom: 6px; }
+.steps strong { display: block; font-size: 16px; }
+.steps span { color: var(--muted); font-size: 14px; }
+
+/* Contact */
+.contact {
+  background: var(--ink); color: var(--bg); border-radius: 8px; padding: 40px 32px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.contact h2 { font-size: clamp(28px, 4vw, 40px); }
+.contact p { color: color-mix(in srgb, var(--bg) 75%, var(--ink)); max-width: 36em; }
+.mailrow { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 8px; }
+.mail { font-family: var(--mono); font-size: 18px; user-select: all; word-break: break-all; }
+.contact .btn { background: var(--bg); color: var(--ink); border-color: var(--bg); }
+.copied { font-family: var(--mono); font-size: 13px; color: var(--fairway); }
+.contact .copied { color: color-mix(in srgb, var(--fairway) 60%, var(--bg)); }
+
+@media (max-width: 760px) {
+  .wrap { gap: 56px; }
+  .hero { grid-template-columns: 1fr; gap: 32px; }
+  .samples { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .formats, .why { grid-template-columns: 1fr; }
+  .formats div { padding-right: 0; }
+  .addons { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr; }
+  .contact { padding: 28px 20px; }
+}
+@media (max-width: 440px) {
+  .samples { grid-template-columns: 1fr; }
+  .frame { max-width: 280px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="handle">@thecorporategolfgirl<span>.</span></div>
+    <div class="label">UGC creator · Singapore · Works worldwide</div>
+  </header>
+
+  <section class="hero">
+    <div>
+      <p class="label">Office-to-fairway content</p>
+      <h1 style="margin-top:12px">Videos for brands that fit a <em>working woman's</em> week, from the 9am pitch to the 6pm range session.</h1>
+      <p class="lede">I work in hotel sales and I'm teaching myself golf. I make short vertical videos with your product in that real routine: outfit changes, what's in my bag, and voiceover tips and stories. Ready for your page or your ads.</p>
+      <div class="actions">
+        <a class="btn" href="#rates">See rates</a>
+        <a class="btn ghost" href="#contact">Get in touch</a>
+      </div>
+    </div>
+    <dl class="facts" aria-label="Quick facts">
+      <div><dt>Based in</dt><dd>Singapore (GMT+8)</dd></div>
+      <div><dt>Day job</dt><dd>Hotel sales</dd></div>
+      <div><dt>Golfing for</dt><dd>2 years, self-taught</dd></div>
+      <div><dt>Current score</dt><dd class="score">120 → chasing 100</dd></div>
+      <div><dt>Style</dt><dd>Voiceover · hands · outfits · POV</dd></div>
+      <div><dt>Turnaround</dt><dd>5–7 days</dd></div>
+    </dl>
+  </section>
+
+  <section id="work">
+    <div class="sec-head">
+      <p class="label">Sample work</p>
+      <h2>Three ways I'd show your product</h2>
+      <p>Each sample is 15–25 seconds, filmed vertically in 4K with captions and a hook in the first two seconds.</p>
+    </div>
+    <div class="samples">
+      <article class="sample">
+        <div class="frame">
+          <p class="hook">"The one thing in my golf bag I never forget."</p>
+          <p class="status">Sample · 0:20 · voiceover</p>
+        </div>
+        <h3>Golf accessory, in my routine</h3>
+        <p>Close-ups of the product being used, in the bag, then on the course. Ends with a clear recommendation for beginners.</p>
+      </article>
+      <article class="sample">
+        <div class="frame">
+          <p class="hook">"From air-con all day to four hours in the sun. This is what I do."</p>
+          <p class="status">Sample · 0:20 · voiceover</p>
+        </div>
+        <h3>Sun care, office to outdoors</h3>
+        <p>Texture close-ups and applying it, then reapplying at the turn. Built around a real problem women golfers have.</p>
+      </article>
+      <article class="sample">
+        <div class="frame">
+          <p class="hook">Everything I need from the office to the range, in one bag.</p>
+          <p class="status">Sample · 0:15 · text + audio</p>
+        </div>
+        <h3>Work bag, packed for both</h3>
+        <p>A flat-lay packing sequence, laptop to golf glove. Fast, satisfying and easy to run as an ad without sound.</p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <p class="label">Formats</p>
+      <h2>What I film</h2>
+    </div>
+    <div class="formats">
+      <div><h3>Office → course transitions</h3><p>Blazer off, glove on. One cut, timed to the music, with your product in both looks.</p></div>
+      <div><h3>What's in my bag</h3><p>Flat lays and packing shots for bags, accessories, tech and skincare.</p></div>
+      <div><h3>Voiceover tips</h3><p>Etiquette, packing and business-travel tips, with your product as part of the advice.</p></div>
+      <div><h3>Storytime</h3><p>Short stories from client golf and life in hospitality, with the product appearing naturally.</p></div>
+      <div><h3>POV walk-ins</h3><p>Chest-height footage from the office lobby to the first tee.</p></div>
+      <div><h3>Hands-on demos</h3><p>Unboxing, texture, fit and detail close-ups, with extra hook variations for testing ads.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <p class="label">Good fit for</p>
+      <h2>Brands I work best with</h2>
+    </div>
+    <div class="fit">
+      <span>Golf apparel & accessories</span>
+      <span>Activewear</span>
+      <span>Workwear & bags</span>
+      <span>Sun care & skincare</span>
+      <span>Travel, hotels & resorts</span>
+      <span>Watches & work tech</span>
+      <span>Hydration & wellness</span>
+    </div>
+    <div class="why">
+      <div><h3>A real routine</h3><p>Your product appears in a week I actually live: client meetings, work trips and evening range sessions.</p></div>
+      <div><h3>A beginner's point of view</h3><p>Most golf content comes from good golfers. I speak to the growing number of women who are just starting.</p></div>
+      <div><h3>I write my own scripts</h3><p>I sell for a living. You get hooks and scripts that sell, and I send you the concept before I film.</p></div>
+    </div>
+  </section>
+
+  <section id="rates">
+    <div class="sec-head">
+      <p class="label">Rate card</p>
+      <h2>Packages</h2>
+      <p>Prices in Singapore dollars. US dollar amounts are approximate. Every package includes a concept, a script, captions and one round of changes.</p>
+    </div>
+    <div class="card-scroll">
+      <table class="scorecard">
+        <thead>
+          <tr><th>No.</th><th>Package</th><th>What you get</th><th>Delivery</th><th>Price</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hole">01</td>
+            <td class="name">Single</td>
+            <td>1 video, 15–30 seconds</td>
+            <td>5 days</td>
+            <td class="price">S$150<small>≈ US$115</small></td>
+          </tr>
+          <tr class="pick">
+            <td class="hole">02</td>
+            <td class="name">Three-pack</td>
+            <td>3 videos in different formats</td>
+            <td>7 days</td>
+            <td class="price">S$400<small>≈ US$310</small></td>
+          </tr>
+          <tr>
+            <td class="hole">03</td>
+            <td class="name">Ad testing</td>
+            <td>5 videos + 3 extra hooks per video</td>
+            <td>10 days</td>
+            <td class="price">S$650<small>≈ US$500</small></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <dl class="addons">
+      <div><dt>Extra hook version</dt><dd>S$30</dd></div>
+      <div><dt>Raw footage</dt><dd>S$50</dd></div>
+      <div><dt>Paid ad rights, 30 days</dt><dd>+30%</dd></div>
+      <div><dt>Paid ad rights, 90 days</dt><dd>+60%</dd></div>
+      <div><dt>Posted on my account</dt><dd>Ask for rates</dd></div>
+      <div><dt>Rush delivery (48 hours)</dt><dd>+25%</dd></div>
+    </dl>
+    <p class="fineprint">You send the product, or I buy it and you reimburse me. 50% up front, 50% on delivery. Organic use on your own pages is included; running a video as a paid ad needs ad rights.</p>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <p class="label">How it works</p>
+      <h2>From brief to delivery</h2>
+    </div>
+    <ol class="steps">
+      <li><strong>Brief</strong><span>You tell me about the product, the goal and what to avoid.</span></li>
+      <li><strong>Concept</strong><span>Within 48 hours I send hooks and a script for you to approve.</span></li>
+      <li><strong>Filming</strong><span>At home, the office or the range, depending on the concept.</span></li>
+      <li><strong>Changes</strong><span>One round of edits is included.</span></li>
+      <li><strong>Delivery</strong><span>Final files in 9:16, with and without captions.</span></li>
+    </ol>
+  </section>
+
+  <section class="contact" id="contact">
+    <p class="label" style="color:inherit;opacity:.7">Work with me</p>
+    <h2>Send me your product and your goal.</h2>
+    <p>I reply within one working day, Singapore time. Tell me what the product is, where the video will run and when you need it.</p>
+    <div class="mailrow">
+      <span class="mail" id="mail">thecorporategolfgirl.collabs@gmail.com</span>
+      <button class="btn" id="copy" type="button">Copy email</button>
+      <span class="copied" id="copied" aria-live="polite"></span>
+    </div>
+  </section>
+</div>
+
+<script>
+document.getElementById('copy').addEventListener('click', function () {
+  var text = document.getElementById('mail').textContent;
+  var note = document.getElementById('copied');
+  function selectIt() {
+    var r = document.createRange(); r.selectNodeContents(document.getElementById('mail'));
+    var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    note.textContent = 'Selected. Press Ctrl/Cmd + C to copy.';
+  }
+  try {
+    navigator.clipboard.writeText(text).then(function () { note.textContent = 'Copied'; }, selectIt);
+  } catch (e) { selectIt(); }
+});
+</script>
