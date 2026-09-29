@@ -73,16 +73,71 @@ const money = (n) =>
 
 const priceOf = (p) => market.price(p.price);
 
-function productImage(product, colorIndex = 0) {
+// A colourway's photos, in order. Put the on-model shot second so product
+// cards show it on hover. With no photos, the illustration stands in.
+function photosOf(product, colorIndex = 0) {
   const c = product.colors[colorIndex] || product.colors[0];
-  if (c.image) return `<img src="${esc(c.image)}" alt="${esc(product.name)} in ${esc(c.name)}" loading="lazy">`;
+  return c.images || [];
+}
+
+function productImage(product, colorIndex = 0, n = 0) {
+  const c = product.colors[colorIndex] || product.colors[0];
+  const src = photosOf(product, colorIndex)[n];
+  if (src) return `<img src="${esc(src)}" alt="${esc(product.name)} in ${esc(c.name)}, photo ${n + 1}" loading="lazy">`;
   return garmentSVG(product.type, c, c.bg);
+}
+
+// Card art: the first photo, plus the second (on-model) one revealed on hover.
+function cardArt(product, colorIndex = 0) {
+  const hover = photosOf(product, colorIndex).length > 1;
+  return productImage(product, colorIndex) + (hover ? `<div class="card-alt">${productImage(product, colorIndex, 1)}</div>` : "");
+}
+
+function lightbox(product, colorIndex, start = 0) {
+  const photos = photosOf(product, colorIndex);
+  const total = Math.max(1, photos.length);
+  let n = start;
+  const wrap = document.createElement("div");
+  wrap.className = "lightbox";
+  wrap.setAttribute("role", "dialog");
+  wrap.setAttribute("aria-modal", "true");
+  wrap.setAttribute("aria-label", `${product.name} photos`);
+  wrap.innerHTML = `
+    <button class="lb-close" aria-label="Close">✕</button>
+    ${total > 1 ? `<button class="lb-nav prev" aria-label="Previous photo">‹</button><button class="lb-nav next" aria-label="Next photo">›</button>` : ""}
+    <figure class="lb-stage"></figure>
+    <p class="lb-count"></p>`;
+  const draw = () => {
+    wrap.querySelector(".lb-stage").innerHTML = productImage(product, colorIndex, n);
+    wrap.querySelector(".lb-count").textContent = total > 1 ? `${n + 1} / ${total}` : "";
+  };
+  const go = (d) => {
+    n = (n + d + total) % total;
+    draw();
+  };
+  const close = () => {
+    wrap.remove();
+    document.removeEventListener("keydown", onKey);
+  };
+  const onKey = (e) => {
+    if (e.key === "Escape") close();
+    if (e.key === "ArrowLeft") go(-1);
+    if (e.key === "ArrowRight") go(1);
+  };
+  document.addEventListener("keydown", onKey);
+  wrap.addEventListener("click", (e) => (e.target === wrap || e.target.classList.contains("lb-stage")) && close());
+  wrap.querySelector(".lb-close").addEventListener("click", close);
+  wrap.querySelector(".prev")?.addEventListener("click", () => go(-1));
+  wrap.querySelector(".next")?.addEventListener("click", () => go(1));
+  document.body.appendChild(wrap);
+  draw();
+  wrap.querySelector(".lb-close").focus();
 }
 
 /* ------------------------------------------------------------ chrome */
 
 function logoMarkup() {
-  return `<a class="logo" href="index.html" aria-label="${BRAND.name} home"><img src="${esc(BRAND.logo)}" alt="${BRAND.name}" height="40"></a>`;
+  return `<a class="logo" href="index.html" aria-label="${BRAND.name} home"><img src="${esc(BRAND.logo)}" alt="PARIII" height="34"></a>`;
 }
 
 // Fall back to a text wordmark until the real logo file is added.
@@ -139,7 +194,7 @@ function renderChrome() {
   document.getElementById("site-footer").innerHTML = `
     <div class="footer-inner">
       <div class="footer-brand">
-        <span class="footer-logo"><img src="${esc(BRAND.logo)}" alt="${BRAND.name}" height="36"></span>
+        <span class="footer-logo"><img src="${esc(BRAND.logoLight)}" alt="PARIII" height="34"></span>
         <p>Men's golf apparel from Singapore, made to play well and look sharp wherever you tee off.</p>
       </div>
       <div>
@@ -547,7 +602,7 @@ function productCard(p) {
     <article class="card" data-id="${p.id}">
       <a class="card-img" href="product.html?id=${p.id}">
         ${p.badge ? `<span class="tag">${esc(p.badge)}</span>` : ""}
-        <div class="card-art">${productImage(p, 0)}</div>
+        <div class="card-art">${cardArt(p, 0)}</div>
       </a>
       <div class="card-body">
         <div class="card-row"><a href="product.html?id=${p.id}" class="card-name">${esc(p.name)}</a><span class="price">${money(priceOf(p))}</span></div>
@@ -563,7 +618,7 @@ function bindCards(root) {
     card.querySelectorAll(".swatch").forEach((s) =>
       s.addEventListener("click", () => {
         const i = Number(s.dataset.i);
-        card.querySelector(".card-art").innerHTML = productImage(p, i);
+        card.querySelector(".card-art").innerHTML = cardArt(p, i);
         card.querySelectorAll(".swatch").forEach((x) => x.classList.toggle("on", x === s));
         card.querySelectorAll("a[href^='product.html']").forEach((a) => (a.href = `product.html?id=${p.id}&c=${i}`));
       })
@@ -576,14 +631,14 @@ function bindCards(root) {
 const pages = {
   home() {
     const grid = document.getElementById("featured");
-    const picks = ["tour-dri-fit-polo", "signature-stripe-polo", "tech-golf-shorts", "quarter-zip-pullover"];
+    const picks = ["shoulder-stripe-polo", "tour-dri-fit-polo", "tech-golf-shorts", "quarter-zip-pullover"];
     grid.innerHTML = picks.map((id) => productCard(getProduct(id))).join("");
     bindCards(grid);
 
     const hero = document.getElementById("hero-art");
     const heroPieces = [
-      ["signature-stripe-polo", 0],
-      ["tech-golf-shorts", 1],
+      ["shoulder-stripe-polo", 0],
+      ["tech-golf-shorts", 0],
       ["tour-cap", 1],
     ];
     hero.innerHTML = heroPieces
@@ -688,7 +743,10 @@ const pages = {
     el.innerHTML = `
       <nav class="crumbs"><a href="shop.html">Shop</a> / <a href="shop.html?c=${p.category}">${CATEGORIES.find((c) => c.id === p.category).label}</a></nav>
       <div class="pdp">
-        <div class="pdp-media"><div class="pdp-art"></div></div>
+        <div class="pdp-media">
+          <button class="pdp-art" aria-label="Open photo full screen"></button>
+          <div class="thumbs"></div>
+        </div>
         <div class="pdp-info">
           ${p.badge ? `<span class="tag static">${esc(p.badge)}</span>` : ""}
           <h1>${esc(p.name)}</h1>
@@ -726,8 +784,27 @@ const pages = {
       </section>`;
 
     const art = el.querySelector(".pdp-art");
+    const thumbs = el.querySelector(".thumbs");
+    let shot = 0;
+    const drawShot = () => {
+      art.innerHTML = productImage(p, colorIndex, shot) + `<span class="zoom-hint">Click to enlarge</span>`;
+      thumbs.querySelectorAll("button").forEach((b) => b.classList.toggle("on", Number(b.dataset.n) === shot));
+    };
+    art.addEventListener("click", () => lightbox(p, colorIndex, shot));
     const drawColor = () => {
-      art.innerHTML = productImage(p, colorIndex);
+      shot = 0;
+      const photos = photosOf(p, colorIndex);
+      thumbs.innerHTML =
+        photos.length > 1
+          ? photos.map((_, n) => `<button data-n="${n}" aria-label="Show photo ${n + 1}">${productImage(p, colorIndex, n)}</button>`).join("")
+          : "";
+      thumbs.querySelectorAll("button").forEach((b) =>
+        b.addEventListener("click", () => {
+          shot = Number(b.dataset.n);
+          drawShot();
+        })
+      );
+      drawShot();
       el.querySelector(".color-name").textContent = p.colors[colorIndex].name;
       el.querySelectorAll(".swatches .swatch").forEach((s) => s.classList.toggle("on", Number(s.dataset.i) === colorIndex));
     };

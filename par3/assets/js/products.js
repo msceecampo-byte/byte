@@ -1,5 +1,10 @@
-// Sample men's range. Replace names, prices and colours with the real products
-// from par3.com.sg/shop. Prices are in USD (see config.js for local pricing).
+// Men's range. The Shoulder Stripe Polo uses a real PAR3 photo; the rest are
+// samples to replace with the products and photos from par3.com.sg/shop.
+// Prices are in USD (see config.js for local pricing).
+//
+// Photos: give a colourway `images: [...]`. The first photo is the main shot;
+// put the on-model photo second so it shows when a shopper hovers a product
+// card. All photos appear in the clickable gallery on the product page.
 // Each entry maps to one Shopify product with "Colour" and "Size" options.
 // `conditions` drives the "Shop by course conditions" filter: hot, mild, cool.
 
@@ -23,6 +28,22 @@ const BG = { light: "#EEF0F3", warm: "#F1EEE8", cool: "#E8EEF3", green: "#E7F0EB
 const SIZES = ["S", "M", "L", "XL", "2XL", "3XL"];
 
 const PRODUCTS = [
+  {
+    id: "shoulder-stripe-polo",
+    name: "Shoulder Stripe Polo",
+    category: "polos",
+    type: "polo",
+    price: 45,
+    badge: "New",
+    conditions: ["hot", "mild"],
+    blurb: "Striped shoulder tape, snap placket.",
+    description:
+      "A clean pique polo with a woven stripe tape across each shoulder and a snap-button placket that sits neat all round. Light, breathable and easy to wear on and off the course.",
+    features: ["Breathable dri-fit pique", "Woven navy and white shoulder tape", "Snap-button placket", "Classic PARIII neck label"],
+    colors: [
+      { name: "Aqua", body: "#BFE6F0", trim: "#BFE6F0", accent: C.navy, bg: BG.cool, images: ["assets/img/shoulder-stripe-polo-aqua-collar.webp"] },
+    ],
+  },
   {
     id: "tour-dri-fit-polo",
     name: "Tour Dri-Fit Polo",

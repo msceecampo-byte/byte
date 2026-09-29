@@ -1,10 +1,10 @@
 /* PAR3 storefront styles */
 
-/* Brand tokens. PLACEHOLDER: swap these for the colours and font used on
-   par3.com.sg. Every colour on the site comes from this block. */
+/* Brand tokens. Every colour on the site comes from this block.
+   --brand is the navy of the PARIII woven label. */
 :root {
-  --brand: #14243c;        /* primary: header bar, buttons, footer */
-  --brand-2: #22385a;      /* primary hover */
+  --brand: #1a2139;        /* PARIII navy: header bar, buttons, footer */
+  --brand-2: #2b3558;      /* navy hover */
   --accent: #c0392b;       /* sale / multi-buy highlights */
   --accent-soft: #fbeceb;
   --bg: #ffffff;
@@ -72,7 +72,7 @@ p { margin: 0 0 1em; }
 #site-header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
 .announce { background: var(--brand); color: var(--on-brand); text-align: center; font-size: 0.78rem; font-weight: 500; padding: 8px 16px; }
 .header-inner { max-width: var(--max); margin: 0 auto; padding: 10px var(--gutter); display: flex; align-items: center; gap: 28px; }
-.logo img { height: 40px; width: auto; }
+.logo img { height: 34px; width: auto; }
 .wordmark { font-weight: 900; font-size: 1.7rem; letter-spacing: 0.02em; color: var(--brand); line-height: 1; }
 .nav { display: flex; gap: 24px; align-items: center; font-size: 0.86rem; font-weight: 600; flex: 1; }
 .nav a { padding: 6px 0; border-bottom: 2px solid transparent; }
@@ -91,7 +91,7 @@ p { margin: 0 0 1em; }
   .nav { display: none; }
   .menu-toggle { display: inline-flex; margin-left: -8px; }
   .header-inner { gap: 8px; }
-  .logo img { height: 32px; }
+  .logo img { height: 26px; }
   .wordmark { font-size: 1.4rem; }
   .size-btn { display: none; }
 }
@@ -127,6 +127,9 @@ p { margin: 0 0 1em; }
 .card-img { display: block; position: relative; border-radius: var(--radius); overflow: hidden; }
 .card-art svg, .card-art img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; transition: transform 0.5s ease; }
 .card:hover .card-art svg, .card:hover .card-art img { transform: scale(1.035); }
+.card-art { position: relative; }
+.card-alt { position: absolute; inset: 0; opacity: 0; transition: opacity 0.35s; }
+.card:hover .card-alt, .card-img:focus-visible .card-alt { opacity: 1; }
 .tag { position: absolute; top: 10px; left: 10px; z-index: 1; background: var(--brand); color: var(--on-brand); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; padding: 4px 9px; border-radius: 4px; }
 .tag.static { position: static; display: inline-block; margin-bottom: 12px; }
 .card-body { padding-top: 12px; }
@@ -214,7 +217,24 @@ select { font: inherit; border: 1px solid var(--line); background: var(--bg); bo
 .crumbs a:hover { color: var(--brand); }
 .pdp { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(28px, 5vw, 72px); align-items: start; }
 .pdp-media { position: sticky; top: 120px; }
+.pdp-art { display: block; width: 100%; padding: 0; border: 0; background: none; position: relative; cursor: zoom-in; border-radius: var(--radius); overflow: hidden; }
 .pdp-art svg, .pdp-art img { width: 100%; height: auto; aspect-ratio: 4 / 5; border-radius: var(--radius); object-fit: cover; }
+.zoom-hint { position: absolute; right: 12px; bottom: 12px; background: rgba(255, 255, 255, 0.92); color: var(--brand); font-size: 0.74rem; font-weight: 700; padding: 6px 10px; border-radius: 4px; opacity: 0; transition: opacity 0.2s; }
+.pdp-art:hover .zoom-hint, .pdp-art:focus-visible .zoom-hint { opacity: 1; }
+.thumbs { display: flex; gap: 10px; margin-top: 10px; }
+.thumbs button { width: 72px; padding: 0; border: 2px solid transparent; border-radius: var(--radius); overflow: hidden; background: none; }
+.thumbs button.on { border-color: var(--brand); }
+.thumbs svg, .thumbs img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; }
+.lightbox { position: fixed; inset: 0; z-index: 80; background: rgba(10, 13, 25, 0.94); display: grid; place-items: center; padding: 56px 16px; }
+.lb-stage { margin: 0; width: 100%; height: 100%; display: grid; place-items: center; }
+.lb-stage img, .lb-stage svg { max-width: min(100%, 1100px); max-height: 100%; width: auto; height: auto; object-fit: contain; border-radius: var(--radius); }
+.lb-stage svg { height: 100%; }
+.lb-close, .lb-nav { position: absolute; background: rgba(255, 255, 255, 0.12); color: #fff; border: 0; border-radius: 99px; width: 44px; height: 44px; font-size: 1.4rem; display: grid; place-items: center; }
+.lb-close:hover, .lb-nav:hover { background: rgba(255, 255, 255, 0.25); }
+.lb-close { top: 14px; right: 14px; font-size: 1rem; }
+.lb-nav.prev { left: 14px; top: 50%; }
+.lb-nav.next { right: 14px; top: 50%; }
+.lb-count { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; color: rgba(255, 255, 255, 0.7); font-size: 0.84rem; margin: 0; }
 .pdp-price { font-size: 1.4rem; font-weight: 800; margin-bottom: 14px; }
 .mb-note { background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); padding: 10px 14px; border-radius: 0 var(--radius) var(--radius) 0; font-size: 0.88rem; }
 .cond-tags { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -311,7 +331,7 @@ details ul { padding-left: 18px; }
 /* ---------------------------------------------------------------- footer */
 #site-footer { background: var(--brand); color: var(--on-brand); }
 #site-footer .wordmark { color: var(--on-brand); }
-.footer-logo img { height: 36px; width: auto; }
+.footer-logo img { height: 34px; width: auto; }
 .footer-inner { max-width: var(--max); margin: 0 auto; padding: 56px var(--gutter) 36px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
 .footer-brand p { opacity: 0.75; margin-top: 14px; max-width: 24em; }
 #site-footer h4 { font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase; margin: 0 0 12px; opacity: 0.6; }

@@ -3,9 +3,11 @@
 
 const BRAND = {
   name: "PAR3",
-  // Drop the logo from par3.com.sg here. Until the file exists, the header
+  // PARIII logo, traced from the woven neck label. Replace both files with the
+  // official vector artwork when you have it. If a file is missing, the header
   // shows "PAR3" as plain text instead.
-  logo: "brand/par3-logo.png",
+  logo: "brand/pariii-logo-navy.svg",
+  logoLight: "brand/pariii-logo-white.svg",
   email: "customerservice@par3.com.sg",
   address: "41 Kallang Pudding Road #06-07, Singapore",
 };

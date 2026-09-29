@@ -12,7 +12,7 @@ python3 -m http.server 8000
 | --- | --- |
 | `index.html` | Home: hero, trust strip, bestsellers, polo multi-buy, shop by course conditions, categories, size finder, email signup |
 | `shop.html` | All products, with category filters (`?c=polos`), course-condition filters (`?w=hot`) and sort |
-| `product.html?id=…` | Product page: colours, sizes, size finder, local delivery time, related products |
+| `product.html?id=…` | Product page: photo gallery (click to view full screen), colours, sizes, size finder, local delivery time, related products |
 | `about.html` | A short brand story |
 
 ## Engagement features
@@ -25,9 +25,9 @@ python3 -m http.server 8000
 
 ## Before launch: replace the placeholders
 
-1. **Logo.** Save the logo from par3.com.sg as `brand/par3-logo.png`, or change `BRAND.logo` in `assets/js/config.js` to its file name. Until that file exists the header shows "PAR3" as plain text.
-2. **Colours and font.** Every colour sits in the `:root` block at the top of `assets/css/styles.css`. Set `--brand`, `--accent` and `--font` to match par3.com.sg.
-3. **Products.** `assets/js/products.js` holds a sample men's range. Replace names, prices, colours and descriptions with the real ones from par3.com.sg/shop. To use a photo, add `image: "assets/img/tour-polo-white.jpg"` to a colourway. Shoot at 4:5 on a plain light background.
+1. **Logo.** `brand/pariii-logo-navy.svg`, `pariii-logo-white.svg` and `pariii-label.svg` were traced from the woven PARIII neck label in a product photo. They read well at header size, but the edges carry some of the fabric texture. Swap in the official vector artwork with the same file names when you have it.
+2. **Colours and font.** Every colour sits in the `:root` block at the top of `assets/css/styles.css`. `--brand` is the label navy (#1A2139). Check `--accent` and `--font` against par3.com.sg.
+3. **Products and photos.** The Shoulder Stripe Polo uses a real PAR3 photo. The other products in `assets/js/products.js` are samples: replace their names, prices, colours and descriptions with the real ones from par3.com.sg/shop. Give each colourway `images: ["…main.jpg", "…on-model.jpg", "…detail.jpg"]`. The first is the main shot and the second shows when a shopper hovers the product card, so make that the photo of a person wearing it. Every photo appears in the product page gallery. Save photos in `assets/img/` as JPG or WebP under 400 KB, ideally at 4:5 (1600×2000 px).
 4. **Prices.** Base prices are in USD (US$40–90) and converted with the indicative rates in `config.js`. They are above the current S$35–45 on par3.com.sg, so decide on final pricing per market.
 5. **Delivery and returns.** The regions, delivery days, fees and free-delivery thresholds in `config.js` are estimates. Check them with your courier.
 6. **Email.** Connect the signup form to Shopify Email or Klaviyo (see the `TODO` in `assets/js/app.js`).
