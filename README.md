@@ -51,3 +51,7 @@ The fonts in `tools/fonts` (Great Vibes, Playfair Display, Montserrat) are from 
 1. Replace the illustrations with your own photos. Shoot product images at a 4:5 ratio (1600×2000 px is ideal) on a plain cream or light background, with the same lighting for every product. Save them as JPG or WebP under 400 KB, put them in `assets/img/`, and add `image: "assets/img/clubhouse-knit-polo-blush.jpg"` to that colourway in `products.js`.
 2. Connect the waitlist forms to an email tool (Shopify Email or Klaviyo). Look for the `TODO` in `assets/js/app.js`.
 3. Move the layout into a Shopify theme and load the products from `products.js` into Shopify.
+
+## PAR3
+
+A separate prototype for PAR3, a worldwide men's golf apparel store, lives in `par3/`. See `par3/README.md`.

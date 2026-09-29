@@ -1,0 +1,780 @@
+// Shared site behaviour: header/footer, country and currency, bag with polo
+// multi-buy, size finder, email signup, and per-page rendering.
+// The bag, country and saved size live in localStorage so they survive page
+// loads. Checkout is a placeholder until the store moves onto Shopify.
+
+const KEYS = { bag: "p3-bag", country: "p3-country", size: "p3-size", signup: "p3-signup" };
+
+const store = {
+  get(key, fallback) {
+    try {
+      const v = localStorage.getItem(key);
+      return v ? JSON.parse(v) : fallback;
+    } catch {
+      return fallback;
+    }
+  },
+  set(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      /* private mode — settings just won't persist */
+    }
+  },
+};
+
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+/* ------------------------------------------------------------ market */
+
+function guessCountry() {
+  const saved = store.get(KEYS.country, null);
+  if (saved && COUNTRIES.some((c) => c.code === saved)) return saved;
+  const langs = navigator.languages || [navigator.language || ""];
+  for (const l of langs) {
+    const region = (l.split("-")[1] || "").toUpperCase();
+    if (COUNTRIES.some((c) => c.code === region)) return region;
+    if (["DE", "FR", "IT", "ES", "NL", "IE", "BE", "AT", "PT", "FI"].includes(region)) return "EU";
+  }
+  return "SG";
+}
+
+const market = {
+  country: null,
+  init() {
+    this.country = COUNTRIES.find((c) => c.code === guessCountry());
+    this.cur = CURRENCIES[this.country.currency];
+    this.region = REGIONS[this.country.region];
+  },
+  set(code) {
+    store.set(KEYS.country, code);
+    location.reload();
+  },
+  // USD -> tidy local price
+  price(usd) {
+    const { rate, step } = this.cur;
+    return Math.ceil((usd * rate) / step) * step;
+  },
+  // Round a local amount (e.g. a discount) to what the currency can show.
+  round(n) {
+    const step = this.cur.step;
+    return step >= 10 ? Math.round(n / step) * step : Math.round(n * 100) / 100;
+  },
+  freeOver() {
+    return this.price(this.region.freeOver);
+  },
+  fee() {
+    return this.price(this.region.fee);
+  },
+};
+
+const money = (n) =>
+  `${market.cur.symbol}${n.toLocaleString("en-US", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 })}`;
+
+const priceOf = (p) => market.price(p.price);
+
+function productImage(product, colorIndex = 0) {
+  const c = product.colors[colorIndex] || product.colors[0];
+  if (c.image) return `<img src="${esc(c.image)}" alt="${esc(product.name)} in ${esc(c.name)}" loading="lazy">`;
+  return garmentSVG(product.type, c, c.bg);
+}
+
+/* ------------------------------------------------------------ chrome */
+
+function logoMarkup() {
+  return `<a class="logo" href="index.html" aria-label="${BRAND.name} home"><img src="${esc(BRAND.logo)}" alt="${BRAND.name}" height="40"></a>`;
+}
+
+// Fall back to a text wordmark until the real logo file is added.
+function bindLogos(root = document) {
+  root.querySelectorAll(".logo img, .footer-logo img").forEach((img) => {
+    const swap = () => {
+      const span = document.createElement("span");
+      span.className = "wordmark";
+      span.textContent = BRAND.name;
+      img.replaceWith(span);
+    };
+    if (img.complete && img.naturalWidth === 0) swap();
+    else img.addEventListener("error", swap);
+  });
+}
+
+function renderChrome() {
+  const page = document.body.dataset.page;
+  const cat = new URLSearchParams(location.search).get("c");
+  const link = (href, label, active) => `<a href="${href}"${active ? ' aria-current="page"' : ""}>${label}</a>`;
+  const nav = [
+    link("shop.html", "Shop all", page === "shop" && !cat),
+    link("shop.html?c=polos", "Polos", cat === "polos"),
+    link("shop.html?c=bottoms", "Shorts &amp; Pants", cat === "bottoms"),
+    link("shop.html?c=layers", "Layers", cat === "layers"),
+    link("about.html", "About", page === "about"),
+  ];
+
+  document.getElementById("site-header").innerHTML = `
+    <div class="announce">
+      Free delivery to ${esc(market.country.name)} over ${money(market.freeOver())} · Arrives in ${market.region.days}
+    </div>
+    <div class="header-inner">
+      <button class="icon-btn menu-toggle" aria-label="Open menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="22" height="22"><path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" stroke-width="1.8"/></svg>
+      </button>
+      ${logoMarkup()}
+      <nav class="nav" aria-label="Main">${nav.join("")}</nav>
+      <div class="header-tools">
+        <button class="country-btn" aria-label="Change country and currency">
+          <span>${market.country.code}</span><span class="muted">${esc(market.cur.symbol)}</span>
+        </button>
+        <button class="icon-btn size-btn" aria-label="Find my size" title="Find my size">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="8" width="19" height="8" rx="1.5"/><path d="M6.5 8v3M10 8v4M13.5 8v3M17 8v4"/></svg>
+        </button>
+        <button class="icon-btn bag-toggle" aria-label="Open bag">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
+          <span class="bag-count" hidden>0</span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" hidden>${nav.join("")}</div>`;
+
+  document.getElementById("site-footer").innerHTML = `
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="footer-logo"><img src="${esc(BRAND.logo)}" alt="${BRAND.name}" height="36"></span>
+        <p>Men's golf apparel from Singapore, made to play well and look sharp wherever you tee off.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        ${CATEGORIES.filter((c) => c.id !== "all").map((c) => `<a href="shop.html?c=${c.id}">${c.label}</a>`).join("")}
+      </div>
+      <div>
+        <h4>Help</h4>
+        <a href="#" data-sizeguide>Size guide</a><a href="#" data-shipping>Shipping &amp; returns</a><a href="mailto:${BRAND.email}">Contact us</a>
+      </div>
+      <div>
+        <h4>PAR3</h4>
+        <a href="about.html">About</a><a href="#" data-country>Ship to: ${esc(market.country.name)}</a>
+      </div>
+    </div>
+    <div class="footer-base">
+      <span>© ${new Date().getFullYear()} ${BRAND.name} · ${esc(BRAND.address)}</span>
+      <span>${esc(BRAND.email)}</span>
+    </div>`;
+
+  const toggle = document.querySelector(".menu-toggle");
+  const mobile = document.querySelector(".mobile-nav");
+  toggle.addEventListener("click", () => {
+    const open = mobile.hidden;
+    mobile.hidden = !open;
+    toggle.setAttribute("aria-expanded", String(open));
+  });
+  document.querySelector(".bag-toggle").addEventListener("click", () => bag.open());
+  document.querySelector(".size-btn").addEventListener("click", () => sizeFinder());
+  bindLogos();
+  bindActions();
+}
+
+// Links anywhere on the page that open the shared modals.
+function bindActions(root = document) {
+  const on = (sel, fn) =>
+    root.querySelectorAll(`${sel}:not([data-bound])`).forEach((el) => {
+      el.dataset.bound = "1";
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        fn();
+      });
+    });
+  on("[data-country], .country-btn", countryPicker);
+  on("[data-sizeguide]", sizeGuide);
+  on("[data-sizefinder]", () => sizeFinder());
+  on("[data-shipping]", shippingInfo);
+}
+
+/* ------------------------------------------------------------ country picker */
+
+function countryPicker() {
+  const groups = Object.entries(REGIONS)
+    .map(([id, r]) => {
+      const list = COUNTRIES.filter((c) => c.region === id);
+      return `
+        <div class="country-group">
+          <h3>${r.label}</h3>
+          ${list
+            .map(
+              (c) => `<button class="country-opt${c.code === market.country.code ? " on" : ""}" data-code="${c.code}">
+                <span>${c.name}</span><span class="muted">${CURRENCIES[c.currency].symbol}</span></button>`
+            )
+            .join("")}
+        </div>`;
+    })
+    .join("");
+  const wrap = modal(
+    `<h2>Where are you playing?</h2>
+     <p class="muted">We'll show prices in your currency, with delivery times and free-delivery offers for your country.</p>
+     <div class="country-grid">${groups}</div>`,
+    "wide"
+  );
+  wrap.querySelectorAll(".country-opt").forEach((b) => b.addEventListener("click", () => market.set(b.dataset.code)));
+}
+
+function shippingInfo() {
+  const rows = Object.values(REGIONS)
+    .map((r) => `<tr><td>${r.label}</td><td>${r.days}</td><td>Over US$${r.freeOver}</td></tr>`)
+    .join("");
+  modal(
+    `<h2>Shipping &amp; returns</h2>
+     <p class="muted">All orders ship from Singapore with tracking.</p>
+     <table class="table"><thead><tr><th>Ship to</th><th>Delivery</th><th>Free delivery</th></tr></thead><tbody>${rows}</tbody></table>
+     <p class="muted small">Import duties and taxes for your country are shown at checkout, so there are no surprises on delivery. Unworn items can be returned within 30 days.</p>`,
+    "wide"
+  );
+}
+
+/* ------------------------------------------------------------ size finder */
+
+function sizeGuide() {
+  modal(
+    `<h2>Size guide</h2>
+     <p class="muted">Body measurements in centimetres. Our fit is regular: true to size with room to swing.</p>
+     <table class="table"><thead><tr><th>Size</th><th>Chest</th><th>Waist</th></tr></thead>
+     <tbody>${SIZE_CHART.map((r) => `<tr><td><strong>${r.size}</strong></td><td>${r.chest}</td><td>${r.waist}</td></tr>`).join("")}</tbody></table>
+     <button class="btn btn-block" data-sizefinder>Not sure? Find my size</button>`,
+    "wide"
+  );
+}
+
+function recommendSize(heightCm, weightKg, fit) {
+  const byWeight = [65, 76, 88, 100, 112];
+  let i = byWeight.findIndex((w) => weightKg < w);
+  if (i === -1) i = SIZES.length - 1;
+  if (heightCm >= 185) i++;
+  if (fit === "relaxed") i++;
+  return SIZES[Math.min(i, SIZES.length - 1)];
+}
+
+function sizeFinder(onPick) {
+  const saved = store.get(KEYS.size, null);
+  const wrap = modal(`
+    <h2>Find my size</h2>
+    <p class="muted">Two quick questions. We'll remember your size on every product.</p>
+    <form class="finder">
+      <div class="unit-toggle" role="radiogroup" aria-label="Units">
+        <label><input type="radio" name="unit" value="metric" checked> cm / kg</label>
+        <label><input type="radio" name="unit" value="imperial"> ft / lb</label>
+      </div>
+      <div class="finder-row metric">
+        <label>Height <input name="cm" type="number" inputmode="numeric" min="140" max="220" placeholder="175" required> <span>cm</span></label>
+        <label>Weight <input name="kg" type="number" inputmode="numeric" min="40" max="180" placeholder="75" required> <span>kg</span></label>
+      </div>
+      <div class="finder-row imperial" hidden>
+        <label>Height <input name="ft" type="number" min="4" max="7" placeholder="5"> <span>ft</span> <input name="in" type="number" min="0" max="11" placeholder="9"> <span>in</span></label>
+        <label>Weight <input name="lb" type="number" min="90" max="400" placeholder="165"> <span>lb</span></label>
+      </div>
+      <fieldset class="fit-pick">
+        <legend>How do you like your polos to fit?</legend>
+        <label><input type="radio" name="fit" value="regular" checked> Close to the body</label>
+        <label><input type="radio" name="fit" value="relaxed"> Relaxed, a bit roomier</label>
+      </fieldset>
+      <button class="btn btn-block" type="submit">Show my size</button>
+    </form>
+    <div class="finder-result" ${saved ? "" : "hidden"}>${saved ? resultHTML(saved) : ""}</div>`);
+
+  const form = wrap.querySelector(".finder");
+  const rows = { metric: form.querySelector(".metric"), imperial: form.querySelector(".imperial") };
+  form.querySelectorAll("[name=unit]").forEach((r) =>
+    r.addEventListener("change", () => {
+      const imperial = form.unit.value === "imperial";
+      rows.metric.hidden = imperial;
+      rows.imperial.hidden = !imperial;
+      rows.metric.querySelectorAll("input").forEach((i) => (i.required = !imperial));
+      rows.imperial.querySelectorAll("[name=ft], [name=lb]").forEach((i) => (i.required = imperial));
+    })
+  );
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const imperial = form.unit.value === "imperial";
+    const cm = imperial ? (Number(form.ft.value) * 12 + Number(form.in.value || 0)) * 2.54 : Number(form.cm.value);
+    const kg = imperial ? Number(form.lb.value) * 0.4536 : Number(form.kg.value);
+    const size = recommendSize(cm, kg, form.fit.value);
+    store.set(KEYS.size, size);
+    const out = wrap.querySelector(".finder-result");
+    out.hidden = false;
+    out.innerHTML = resultHTML(size);
+    out.querySelector(".use-size")?.addEventListener("click", () => {
+      onPick?.(size);
+      wrap.remove();
+    });
+    document.dispatchEvent(new CustomEvent("sizechange", { detail: size }));
+  });
+
+  function resultHTML(size) {
+    return `<p>Your PAR3 size is</p><div class="big-size">${size}</div>
+      ${onPick ? `<button class="btn btn-block use-size">Use size ${size}</button>` : `<p class="muted small">We'll pre-select it on every product page.</p>`}`;
+  }
+  wrap.querySelector(".use-size")?.addEventListener("click", () => {
+    onPick?.(saved);
+    wrap.remove();
+  });
+}
+
+/* ------------------------------------------------------------ bag */
+
+const bag = {
+  items: store.get(KEYS.bag, []),
+
+  save() {
+    store.set(KEYS.bag, this.items);
+    this.render();
+  },
+
+  add(productId, colorIndex, size, qty = 1) {
+    const key = `${productId}|${colorIndex}|${size}`;
+    const line = this.items.find((i) => i.key === key);
+    if (line) line.qty += qty;
+    else this.items.push({ key, productId, colorIndex, size, qty });
+    this.save();
+    this.open();
+  },
+
+  setQty(key, qty) {
+    const line = this.items.find((i) => i.key === key);
+    if (!line) return;
+    line.qty = qty;
+    if (line.qty <= 0) this.items = this.items.filter((i) => i.key !== key);
+    this.save();
+  },
+
+  lines() {
+    return this.items.map((i) => ({ ...i, product: getProduct(i.productId) })).filter((l) => l.product);
+  },
+
+  count() {
+    return this.lines().reduce((n, l) => n + l.qty, 0);
+  },
+
+  subtotal() {
+    return this.lines().reduce((sum, l) => sum + priceOf(l.product) * l.qty, 0);
+  },
+
+  // Multi-buy on polos: returns the tier reached, the saving, and how many more
+  // polos unlock the next tier.
+  multibuy() {
+    const polos = this.lines().filter((l) => l.product.category === MULTIBUY.category);
+    const qty = polos.reduce((n, l) => n + l.qty, 0);
+    const value = polos.reduce((s, l) => s + priceOf(l.product) * l.qty, 0);
+    const tier = MULTIBUY.tiers.find((t) => qty >= t.qty);
+    const next = [...MULTIBUY.tiers].reverse().find((t) => qty < t.qty);
+    return { qty, tier, saving: tier ? market.round(value * tier.off) : 0, next };
+  },
+
+  mount() {
+    const el = document.createElement("div");
+    el.innerHTML = `
+      <div class="scrim" hidden></div>
+      <aside class="drawer" aria-label="Your bag" aria-hidden="true">
+        <header><h2>Your bag</h2><button class="icon-btn drawer-close" aria-label="Close bag">✕</button></header>
+        <div class="meters"></div>
+        <div class="drawer-lines"></div>
+        <footer class="drawer-foot"></footer>
+      </aside>`;
+    document.body.append(...el.children);
+    document.querySelector(".scrim").addEventListener("click", () => this.close());
+    document.querySelector(".drawer-close").addEventListener("click", () => this.close());
+    document.addEventListener("keydown", (e) => e.key === "Escape" && this.close());
+    this.render();
+  },
+
+  open() {
+    document.querySelector(".drawer").classList.add("open");
+    document.querySelector(".drawer").setAttribute("aria-hidden", "false");
+    document.querySelector(".scrim").hidden = false;
+  },
+
+  close() {
+    document.querySelector(".drawer")?.classList.remove("open");
+    document.querySelector(".drawer")?.setAttribute("aria-hidden", "true");
+    const scrim = document.querySelector(".scrim");
+    if (scrim) scrim.hidden = true;
+  },
+
+  render() {
+    const count = this.count();
+    const badge = document.querySelector(".bag-count");
+    if (badge) {
+      badge.hidden = count === 0;
+      badge.textContent = count;
+    }
+    const lines = document.querySelector(".drawer-lines");
+    if (!lines) return;
+
+    const sub = this.subtotal();
+    const mb = this.multibuy();
+    const afterDiscount = sub - mb.saving;
+    const free = market.freeOver();
+    const left = free - afterDiscount;
+
+    const polosLeft = mb.next ? mb.next.qty - mb.qty : 0;
+    document.querySelector(".meters").innerHTML = count
+      ? `<div class="meter-block">
+           <p>${left > 0 ? `You're <strong>${money(market.round(left))}</strong> away from free delivery` : "You've unlocked <strong>free delivery</strong>"}</p>
+           <div class="meter"><span style="width:${Math.min(100, (afterDiscount / free) * 100)}%"></span></div>
+         </div>
+         <div class="meter-block multibuy">
+           <p>${
+             mb.next
+               ? `Add <strong>${polosLeft} more polo${polosLeft > 1 ? "s" : ""}</strong> to save ${Math.round(mb.next.off * 100)}% on your polos`
+               : `Multi-buy unlocked: <strong>${Math.round(mb.tier.off * 100)}% off</strong> all your polos`
+           }</p>
+           <a class="link small" href="shop.html?c=polos">Shop polos</a>
+         </div>`
+      : "";
+
+    if (!count) {
+      lines.innerHTML = `<div class="empty"><p>Your bag is empty.</p><a class="btn" href="shop.html">Start shopping</a></div>`;
+      document.querySelector(".drawer-foot").innerHTML = "";
+      return;
+    }
+
+    lines.innerHTML = this.lines()
+      .map(({ key, product: p, colorIndex, size, qty }) => {
+        const c = p.colors[colorIndex] || p.colors[0];
+        return `
+          <div class="line">
+            <a class="line-img" href="product.html?id=${p.id}&c=${colorIndex}">${productImage(p, colorIndex)}</a>
+            <div class="line-info">
+              <a href="product.html?id=${p.id}&c=${colorIndex}" class="line-name">${esc(p.name)}</a>
+              <span class="muted">${esc(c.name)} · ${esc(size)}</span>
+              <div class="qty" data-key="${esc(key)}">
+                <button aria-label="Decrease quantity" data-d="-1">−</button><span>${qty}</span><button aria-label="Increase quantity" data-d="1">+</button>
+              </div>
+            </div>
+            <span class="line-price">${money(priceOf(p) * qty)}</span>
+          </div>`;
+      })
+      .join("");
+    lines.querySelectorAll(".qty button").forEach((b) =>
+      b.addEventListener("click", () => {
+        const key = b.parentElement.dataset.key;
+        const line = this.items.find((i) => i.key === key);
+        this.setQty(key, line.qty + Number(b.dataset.d));
+      })
+    );
+
+    const shipping = left > 0 ? market.fee() : 0;
+    document.querySelector(".drawer-foot").innerHTML = `
+      <div class="sum"><span>Subtotal</span><span>${money(sub)}</span></div>
+      ${mb.saving ? `<div class="sum save"><span>Polo multi-buy (${Math.round(mb.tier.off * 100)}% off)</span><span>−${money(mb.saving)}</span></div>` : ""}
+      <div class="sum"><span>Delivery to ${esc(market.country.name)}</span><span>${shipping ? money(shipping) : "Free"}</span></div>
+      <div class="sum total"><span>Total</span><span>${money(market.round(afterDiscount + shipping))}</span></div>
+      <p class="muted small">Arrives in ${market.region.days}. Any import duties are shown at checkout.</p>
+      <button class="btn btn-block checkout">Checkout</button>`;
+    document.querySelector(".checkout").addEventListener("click", () => checkoutSoon());
+  },
+};
+
+function checkoutSoon() {
+  modal(`
+    <h2>Checkout is coming soon</h2>
+    <p>This is a preview of the new ${BRAND.name} store, and checkout switches on at launch. Your bag is saved. Leave your email and we'll send you ${WELCOME_OFFER} when we open.</p>
+    ${signupForm("checkout")}`);
+}
+
+/* ------------------------------------------------------------ signup */
+
+function signupForm(source) {
+  return `
+    <form class="signup" data-source="${source}">
+      <label class="sr-only" for="su-${source}">Email address</label>
+      <input id="su-${source}" type="email" name="email" placeholder="Your email" required autocomplete="email">
+      <button class="btn" type="submit">Sign up</button>
+      <p class="consent">You'll get emails from ${BRAND.name} about new colours and offers. Unsubscribe anytime.</p>
+    </form>`;
+}
+
+function bindSignups(root = document) {
+  root.querySelectorAll("form.signup:not([data-bound])").forEach((form) => {
+    form.dataset.bound = "1";
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      // TODO: send to the email platform (Shopify Email / Klaviyo) at launch.
+      const list = store.get(KEYS.signup, []);
+      list.push({ email: form.email.value, source: form.dataset.source, country: market.country.code, at: new Date().toISOString() });
+      store.set(KEYS.signup, list);
+      form.outerHTML = `<p class="joined"><strong>You're in.</strong> Look out for ${WELCOME_OFFER} in your inbox.</p>`;
+    });
+  });
+}
+
+/* ------------------------------------------------------------ ui bits */
+
+function modal(html, size = "") {
+  const wrap = document.createElement("div");
+  wrap.className = "modal-wrap";
+  wrap.innerHTML = `<div class="modal ${size}" role="dialog" aria-modal="true"><button class="icon-btn modal-close" aria-label="Close">✕</button>${html}</div>`;
+  document.body.appendChild(wrap);
+  const close = () => {
+    wrap.remove();
+    document.removeEventListener("keydown", onKey);
+  };
+  const onKey = (e) => e.key === "Escape" && close();
+  document.addEventListener("keydown", onKey);
+  wrap.addEventListener("click", (e) => e.target === wrap && close());
+  wrap.querySelector(".modal-close").addEventListener("click", close);
+  // A link inside a modal that opens another modal replaces this one.
+  wrap.querySelectorAll("[data-sizefinder], [data-sizeguide], [data-country], [data-shipping]").forEach((a) => a.addEventListener("click", close));
+  bindSignups(wrap);
+  bindActions(wrap);
+  wrap.querySelector("input, button:not(.modal-close)")?.focus();
+  return wrap;
+}
+
+function toast(msg) {
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(() => t.classList.add("show"));
+  setTimeout(() => {
+    t.classList.remove("show");
+    setTimeout(() => t.remove(), 300);
+  }, 2600);
+}
+
+function productCard(p) {
+  const swatches = p.colors
+    .map((c, i) => `<button class="swatch${i === 0 ? " on" : ""}" style="--c:${c.body}" data-i="${i}" aria-label="${esc(c.name)}"></button>`)
+    .join("");
+  return `
+    <article class="card" data-id="${p.id}">
+      <a class="card-img" href="product.html?id=${p.id}">
+        ${p.badge ? `<span class="tag">${esc(p.badge)}</span>` : ""}
+        <div class="card-art">${productImage(p, 0)}</div>
+      </a>
+      <div class="card-body">
+        <div class="card-row"><a href="product.html?id=${p.id}" class="card-name">${esc(p.name)}</a><span class="price">${money(priceOf(p))}</span></div>
+        <p class="muted small">${esc(p.blurb)}</p>
+        <div class="swatches">${swatches}</div>
+      </div>
+    </article>`;
+}
+
+function bindCards(root) {
+  root.querySelectorAll(".card").forEach((card) => {
+    const p = getProduct(card.dataset.id);
+    card.querySelectorAll(".swatch").forEach((s) =>
+      s.addEventListener("click", () => {
+        const i = Number(s.dataset.i);
+        card.querySelector(".card-art").innerHTML = productImage(p, i);
+        card.querySelectorAll(".swatch").forEach((x) => x.classList.toggle("on", x === s));
+        card.querySelectorAll("a[href^='product.html']").forEach((a) => (a.href = `product.html?id=${p.id}&c=${i}`));
+      })
+    );
+  });
+}
+
+/* ------------------------------------------------------------ pages */
+
+const pages = {
+  home() {
+    const grid = document.getElementById("featured");
+    const picks = ["tour-dri-fit-polo", "signature-stripe-polo", "tech-golf-shorts", "quarter-zip-pullover"];
+    grid.innerHTML = picks.map((id) => productCard(getProduct(id))).join("");
+    bindCards(grid);
+
+    const hero = document.getElementById("hero-art");
+    const heroPieces = [
+      ["signature-stripe-polo", 0],
+      ["tech-golf-shorts", 1],
+      ["tour-cap", 1],
+    ];
+    hero.innerHTML = heroPieces
+      .map(([id, c], n) => {
+        const p = getProduct(id);
+        return `<a href="product.html?id=${id}&c=${c}" class="hero-tile t${n}" aria-label="${esc(p.name)}">${productImage(p, c)}</a>`;
+      })
+      .join("");
+
+    const cats = document.getElementById("cats");
+    const catArt = { polos: ["tour-dri-fit-polo", 1], bottoms: ["stretch-golf-pants", 1], layers: ["quarter-zip-pullover", 2], headwear: ["bucket-hat", 0] };
+    cats.innerHTML = CATEGORIES.filter((c) => c.id !== "all")
+      .map((c) => {
+        const [id, ci] = catArt[c.id];
+        return `<a class="tile" href="shop.html?c=${c.id}">${productImage(getProduct(id), ci)}<span>${c.label}</span></a>`;
+      })
+      .join("");
+
+    const conds = document.getElementById("conditions");
+    conds.innerHTML = CONDITIONS.map(
+      (c) => `<a class="cond cond-${c.id}" href="shop.html?w=${c.id}">
+        <strong>${c.label}</strong><span>${c.note}</span>
+        <em>${PRODUCTS.filter((p) => p.conditions.includes(c.id)).length} pieces →</em></a>`
+    ).join("");
+
+    const mbPrice = priceOf(getProduct("tour-dri-fit-polo"));
+    document.getElementById("mb-example").textContent = `Three Tour polos: ${money(mbPrice * 3)} → ${money(market.round(mbPrice * 3 * 0.85))}`;
+
+    document.querySelectorAll("[data-signup]").forEach((el) => (el.innerHTML = signupForm(el.dataset.signup)));
+    document.querySelectorAll("[data-offer]").forEach((el) => (el.textContent = WELCOME_OFFER));
+    document.querySelectorAll("[data-ship-country]").forEach((el) => (el.textContent = market.country.name));
+    document.querySelectorAll("[data-ship-days]").forEach((el) => (el.textContent = market.region.days));
+  },
+
+  shop() {
+    const params = new URLSearchParams(location.search);
+    let cat = params.get("c") || "all";
+    let weather = params.get("w") || "any";
+    if (!CATEGORIES.some((c) => c.id === cat)) cat = "all";
+
+    const chips = document.getElementById("chips");
+    const wchips = document.getElementById("wchips");
+    const grid = document.getElementById("grid");
+    const sort = document.getElementById("sort");
+    const count = document.getElementById("count");
+    const title = document.getElementById("shop-title");
+
+    const sync = () => {
+      const q = new URLSearchParams();
+      if (cat !== "all") q.set("c", cat);
+      if (weather !== "any") q.set("w", weather);
+      history.replaceState(null, "", `shop.html${q.toString() ? `?${q}` : ""}`);
+    };
+
+    const draw = () => {
+      title.textContent = cat === "all" ? "Men's golf apparel" : CATEGORIES.find((c) => c.id === cat).label;
+      chips.innerHTML = CATEGORIES.map((c) => `<button class="chip${c.id === cat ? " on" : ""}" data-c="${c.id}">${c.label}</button>`).join("");
+      wchips.innerHTML =
+        `<span class="muted small">Course conditions:</span>` +
+        [{ id: "any", label: "Any" }, ...CONDITIONS]
+          .map((c) => `<button class="chip sm${c.id === weather ? " on" : ""}" data-w="${c.id}">${c.label}</button>`)
+          .join("");
+      chips.querySelectorAll(".chip").forEach((b) =>
+        b.addEventListener("click", () => {
+          cat = b.dataset.c;
+          sync();
+          draw();
+        })
+      );
+      wchips.querySelectorAll(".chip").forEach((b) =>
+        b.addEventListener("click", () => {
+          weather = b.dataset.w;
+          sync();
+          draw();
+        })
+      );
+      let list = PRODUCTS.filter((p) => (cat === "all" || p.category === cat) && (weather === "any" || p.conditions.includes(weather)));
+      if (sort.value === "low") list = [...list].sort((a, b) => a.price - b.price);
+      if (sort.value === "high") list = [...list].sort((a, b) => b.price - a.price);
+      grid.innerHTML = list.length
+        ? list.map(productCard).join("")
+        : `<p class="muted empty-grid">Nothing matches those filters yet. <a class="link" href="shop.html">See everything</a></p>`;
+      count.textContent = `${list.length} item${list.length === 1 ? "" : "s"}`;
+      bindCards(grid);
+    };
+    sort.addEventListener("change", draw);
+    draw();
+  },
+
+  product() {
+    const params = new URLSearchParams(location.search);
+    const p = getProduct(params.get("id")) || PRODUCTS[0];
+    let colorIndex = Math.min(Number(params.get("c")) || 0, p.colors.length - 1);
+    const sizes = p.sizes || SIZES;
+    const mySize = store.get(KEYS.size, null);
+    let size = sizes.length === 1 ? sizes[0] : sizes.includes(mySize) ? mySize : null;
+    document.title = `${p.name} | ${BRAND.name}`;
+    const isPolo = p.category === MULTIBUY.category;
+    const apparel = !p.sizes;
+
+    const el = document.getElementById("product");
+    el.innerHTML = `
+      <nav class="crumbs"><a href="shop.html">Shop</a> / <a href="shop.html?c=${p.category}">${CATEGORIES.find((c) => c.id === p.category).label}</a></nav>
+      <div class="pdp">
+        <div class="pdp-media"><div class="pdp-art"></div></div>
+        <div class="pdp-info">
+          ${p.badge ? `<span class="tag static">${esc(p.badge)}</span>` : ""}
+          <h1>${esc(p.name)}</h1>
+          <p class="pdp-price">${money(priceOf(p))}</p>
+          ${isPolo ? `<p class="mb-note"><strong>Multi-buy:</strong> any 2 polos save 10%, 3 or more save 15%. Mix styles and colours.</p>` : ""}
+          <p>${esc(p.description)}</p>
+          <div class="cond-tags">${p.conditions.map((c) => `<a href="shop.html?w=${c}" class="cond-tag">${CONDITIONS.find((x) => x.id === c).label}</a>`).join("")}</div>
+          <div class="opt">
+            <div class="opt-label">Colour: <strong class="color-name"></strong></div>
+            <div class="swatches lg">${p.colors
+              .map((c, i) => `<button class="swatch" style="--c:${c.body}" data-i="${i}" aria-label="${esc(c.name)}"></button>`)
+              .join("")}</div>
+          </div>
+          <div class="opt">
+            <div class="opt-label">Size${apparel ? '<span class="size-links"><a href="#" class="link small find-size">Find my size</a> <a href="#" class="link small" data-sizeguide>Size guide</a></span>' : ""}</div>
+            <div class="sizes">${sizes.map((s) => `<button class="size${s === size ? " on" : ""}" data-s="${s}">${s}</button>`).join("")}</div>
+            ${apparel && size && size === mySize ? `<p class="muted small size-hint">Pre-selected from your size finder result.</p>` : ""}
+          </div>
+          <button class="btn btn-block add">Add to bag · ${money(priceOf(p))}</button>
+          <ul class="assure">
+            <li>Delivers to ${esc(market.country.name)} in ${market.region.days}</li>
+            <li>Free delivery over ${money(market.freeOver())}</li>
+            <li>30-day returns on unworn items</li>
+          </ul>
+          <div class="accordions">
+            <details open><summary>Details</summary><ul>${p.features.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></details>
+            <details><summary>Fit &amp; care</summary><p>Regular fit, true to size. Machine wash cold, don't tumble dry, and don't iron over the logo. Our quick-dry fabrics are usually dry within an hour on a hanger.</p></details>
+            <details><summary>Reviews</summary><p>No reviews yet. Reviews from verified buyers will appear here once the store is live.</p></details>
+          </div>
+        </div>
+      </div>
+      <section class="section">
+        <div class="section-head"><h2>Complete the look</h2></div>
+        <div class="grid" id="related"></div>
+      </section>`;
+
+    const art = el.querySelector(".pdp-art");
+    const drawColor = () => {
+      art.innerHTML = productImage(p, colorIndex);
+      el.querySelector(".color-name").textContent = p.colors[colorIndex].name;
+      el.querySelectorAll(".swatches .swatch").forEach((s) => s.classList.toggle("on", Number(s.dataset.i) === colorIndex));
+    };
+    el.querySelectorAll(".swatches .swatch").forEach((s) =>
+      s.addEventListener("click", () => {
+        colorIndex = Number(s.dataset.i);
+        history.replaceState(null, "", `product.html?id=${p.id}&c=${colorIndex}`);
+        drawColor();
+      })
+    );
+    const pickSize = (s) => {
+      size = s;
+      el.querySelectorAll(".size").forEach((x) => x.classList.toggle("on", x.dataset.s === s));
+      el.querySelector(".sizes").classList.remove("need");
+    };
+    el.querySelectorAll(".size").forEach((b) => b.addEventListener("click", () => pickSize(b.dataset.s)));
+    el.querySelector(".find-size")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      sizeFinder(pickSize);
+    });
+    el.querySelector(".add").addEventListener("click", () => {
+      if (!size) {
+        el.querySelector(".sizes").classList.add("need");
+        toast("Pick a size first");
+        return;
+      }
+      bag.add(p.id, colorIndex, size);
+    });
+    drawColor();
+
+    const pairs = { polos: ["bottoms", "headwear"], bottoms: ["polos", "layers"], layers: ["polos", "bottoms"], headwear: ["polos", "bottoms"] };
+    const related = PRODUCTS.filter((x) => x.id !== p.id && pairs[p.category].includes(x.category)).slice(0, 4);
+    const grid = document.getElementById("related");
+    grid.innerHTML = related.map(productCard).join("");
+    bindCards(grid);
+  },
+
+  about() {
+    document.querySelectorAll("[data-signup]").forEach((el) => (el.innerHTML = signupForm(el.dataset.signup)));
+  },
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  market.init();
+  pages[document.body.dataset.page]?.();
+  renderChrome();
+  bag.mount();
+  bindSignups();
+  bindActions();
+});

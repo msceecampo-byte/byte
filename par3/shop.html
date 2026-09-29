@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shop | PAR3</title>
+  <meta name="description" content="Shop PAR3 men's golf polos, shorts, pants, layers and headwear. Filter by course conditions and see prices in your currency.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-page="shop">
+  <header id="site-header"></header>
+
+  <main class="wrap" id="shop">
+    <section class="shop-head">
+      <p class="eyebrow">Shop · Men</p>
+      <h1 id="shop-title">Men's golf apparel</h1>
+      <p>Quick-dry polos, stretch bottoms and easy layers. Mix any 2 polos to save 10%, or 3 or more to save 15%.</p>
+    </section>
+    <div class="toolbar">
+      <div id="chips"></div>
+      <div class="toolbar-right">
+        <span id="count" class="muted"></span>
+        <label class="sr-only" for="sort">Sort</label>
+        <select id="sort">
+          <option value="featured">Featured</option>
+          <option value="low">Price: low to high</option>
+          <option value="high">Price: high to low</option>
+        </select>
+      </div>
+    </div>
+    <div id="wchips"></div>
+    <div class="grid" id="grid"></div>
+    <div class="section"></div>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/garments.js"></script>
+  <script src="assets/js/products.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
