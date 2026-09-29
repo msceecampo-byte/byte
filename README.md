@@ -27,6 +27,10 @@ All products live in `assets/js/products.js`: names, prices, descriptions and co
 
 Prices are in SGD (S$79–119 for apparel, S$39–45 for accessories). They assume a supplier cost of up to S$20 per piece, which gives roughly a 4–6× markup. Free delivery starts at S$100. Change these in `assets/js/app.js` (`CURRENCY`, `FREE_SHIPPING_AT`).
 
+## Social media
+
+`social/PLAYBOOK.md` is the creator playbook for the personal account: positioning, content pillars, 30 reel ideas, a 4-week calendar and the plan for reaching S$3,000 a month.
+
 ## Logo files
 
 Everything is in `brand/`. The text in each SVG is converted to outlines, so the files look the same everywhere and can go straight to an embroidery or print vendor.
