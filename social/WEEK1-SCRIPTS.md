@@ -6,7 +6,7 @@ Seven reels ready to film, one for each day of Week 1 in the calendar (`PLAYBOOK
 - Film everything vertically (9:16), in 4K or 1080p at 30fps.
 - Record voiceovers separately in a quiet room with the clip mic, then add them in CapCut.
 - Put the first line of on-screen text in the **top third** of the frame and turn on auto-captions. Most people watch without sound.
-- Replace `@yourhandle` with your chosen handle.
+- Your handle is `@thecorporategolfgirl`. Put it in the corner of your title cards in the Road to 100 series.
 - Never show your employer's name, logo, uniform, building or colleagues.
 
 **Filming plan:**

@@ -63,7 +63,15 @@ Search each handle on Instagram, TikTok and Facebook, and choose one that's free
 - `@ceecampogolf`
 - `@teeswithcee`
 
-**Recommendation:** use `@ceeonthefairway` or `@fairwayafter6`. Neither depends on your current score or employer, and both sit naturally next to `@fairwaysociety` in January. Avoid names built on "breaking 100", which stop fitting once you break it.
+### ✅ Chosen handle: `@thecorporategolfgirl`
+
+It says the whole idea in three words, people can search for it, and it doesn't depend on your score or employer.
+
+- **Display name** (searchable, separate from the handle): `Cee | The Corporate Golf Girl`
+- **Set it up the same day on all three platforms,** before anyone else takes it. At 20 characters it fits every platform's limit.
+- **If it's taken somewhere,** use one fallback everywhere else too, in this order: `@the.corporategolfgirl`, `@corporategolfgirl`, `@thecorporategolfgal`.
+- **Also claim it** on YouTube (for Shorts later) and Gmail (e.g. `thecorporategolfgirl.collabs@gmail.com`) for brand emails, even before you use them.
+- **Search the name first** on each platform and on Google. If an established creator already uses something very close, pick a fallback, so brands and viewers don't confuse you with them.
 
 ### Bio
 
@@ -82,7 +90,7 @@ Keep the 1,500 Instagram followers. You don't need to start a fresh account. Rec
 
 1. **Clean up the old content first.** Archive (don't delete) old personal posts that don't fit the new theme, and anything showing your workplace, uniform, name badge, colleagues or clients. Check your tagged photos too.
 2. **Switch Instagram to a Creator account** (Settings → Account type and tools). This gives you analytics and the branded-content tools. Stay on *Creator*, not *Business*, so you keep access to trending music.
-3. **Change the handle and display name** on all three platforms to the handle you choose. Put a keyword in the display name for search, e.g. `Cee | Corporate Golf Girl`.
+3. **Change the handle and display name** on all three platforms to the handle you choose. Put a keyword in the display name for search, e.g. `Cee | The Corporate Golf Girl`.
 4. **Make TikTok and Facebook public,** and on Facebook turn on Professional mode on your profile so your reels can be recommended and you get analytics.
 5. **Post 3 reels before you announce it.** Then post one Story to your current followers: "I'm turning this into a golf account. Stay if you're into it!" Some friends will unfollow, which is fine: your engagement rate gets better.
 6. **Pin 3 reels to the top of your profile:** "Why I learned golf" (#7), the Road to 100 launch (#14) and your best-performing reel.
@@ -250,7 +258,7 @@ Rates: from S$[X] per video, including usage rights for [30 days].
 Happy to send a quick concept first.
 
 Cee
-[@handle]
+@thecorporategolfgirl
 ```
 
 ---
