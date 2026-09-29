@@ -64,7 +64,7 @@ const COUNTRIES = [
 
 // Polo multi-buy: the biggest tier the bag qualifies for applies to every polo in it.
 const MULTIBUY = {
-  category: "polos",
+  category: "shirts",
   tiers: [
     { qty: 3, off: 0.15 },
     { qty: 2, off: 0.1 },

@@ -40,17 +40,20 @@ This is the photo shoppers see when they hover over a product or open its galler
 
 | Product | Colours | Framing | File names |
 | --- | --- | --- | --- |
-| PARIII Solid Active Wear Shirt | Green, Navy Blue, Orange, Sky Blue, Black | Head to mid-thigh, front | `solid-shirt-<colour>-model.jpg` |
-| Nautical Golf Short | Navy | Waist to shoes, front, plus one from behind to show the back logo | `nautical-short-navy-model.jpg`, `nautical-short-navy-model-back.jpg` |
-| Shoulder Stripe Polo | Aqua | Head to mid-thigh, front, plus one side-on to show the shoulder stripe | `shoulder-stripe-polo-aqua-model.jpg`, `shoulder-stripe-polo-aqua-model-side.jpg` |
-| The rest of the range on par3.com.sg | Every colour | Same as above | `<product>-<colour>-model.jpg` |
+| PAR3 Solid Active Wear Shirt | Green, Navy Blue, Orange, Sky Blue, Black | Head to mid-thigh, front | `solid-shirt-<colour>-model.jpg` |
+| PAR3 Pilot Stripes Shirts | Green, Navy Blue, Red, Black, Blue | Head to mid-thigh, front | `pilot-stripes-<colour>-model.jpg` |
+| PAR3 New Golf Polo Shirt | Its 8 colours | Head to mid-thigh, front | `new-golf-polo-<colour>-model.jpg` |
+| PAR3 Unique Design Shirt and Polo T-shirt | Every colour | Head to mid-thigh, front | `unique-design-<colour>-model.jpg` |
+| Printed shorts: Nautical, Hanabi, Lucky Clover, Tropical Vibe | One each | Waist to shoes, front, plus one from behind to show the back logo | `<name>-short-model.jpg`, `<name>-short-model-back.jpg` |
+| Plain and Breathable shorts | Every colour | Waist to shoes, front | `<name>-short-model.jpg` |
+| Golf pants | Every colour | Waist to shoes, front and side | `<name>-pants-model.jpg` |
 
 All 4:5, at least 1600 × 2000 px. Colour names in files are lowercase with hyphens: `green`, `navy`, `orange`, `sky-blue`, `black`.
 
-### 4. Product photos on white (to finish the colour set)
-- Only the black shirt currently has real photos. Green, Navy Blue, Orange and Sky Blue are recoloured previews that must be replaced.
-- Shoot **front and back of each colour** on the same setup as the existing black shirt photos: square, pure white background, the same angle.
-- Files: `solid-shirt-<colour>-front.jpg`, `solid-shirt-<colour>-back.jpg`
+### 4. Product photos on white (to fill the gaps)
+- Every product already has photos from par3.com.sg, but some colours have only one. The New Golf Polo and the Unique Design shirts have one photo per colour.
+- Shoot the **front and back of those colours** on the same setup as the existing photos: square, pure white background, the same angle.
+- Files: `<product>-<colour>-front.jpg`, `<product>-<colour>-back.jpg`
 
 ### 5. Details
 Close-ups that sell quality:
@@ -90,6 +93,6 @@ Put the files in `par3/assets/img/`. On-model photos can come straight from the 
 
 1. **Banner:** set `HERO.photo` and `HERO.phone` in `assets/js/config.js`.
 2. **Shop the look:** set `photo` in `LOOKS` in `assets/js/products.js`, and position the clickable markers on the shirt and shorts (`x`/`y` as % of the photo).
-3. **Products:** list each colour's photos in `images` in `assets/js/products.js`, in this order: front, **on-model** (shown on hover), back, details.
+3. **Products:** the simplest route is to add the new photos to each product on par3.com.sg (on-model photo second), then re-run `python3 par3/tools/import_par3.py`, which picks them up automatically.
 
 Or send the photos to Claude and they'll be added for you.

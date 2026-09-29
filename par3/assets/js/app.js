@@ -1,9 +1,20 @@
-// Shared site behaviour: header/footer, country and currency, bag with polo
+// Shared site behaviour: header/footer, country and currency, bag with shirt
 // multi-buy, size finder, email signup, and per-page rendering.
 // The bag, country and saved size live in localStorage so they survive page
 // loads. Checkout is a placeholder until the store moves onto Shopify.
 
-const KEYS = { bag: "p3-bag", country: "p3-country", size: "p3-size", signup: "p3-signup" };
+const KEYS = { bag: "p3-bag", country: "p3-country", size: "p3-size", waist: "p3-waist", signup: "p3-signup" };
+
+// "32" -> "Waist 32" for shorts and pants; the fit, if any, is already in the string.
+const sizeLabel = (p, size) => (isWaistSized(p) ? `Waist ${size}` : size);
+
+// The size to pre-select for a product from the shopper's size-finder result.
+function savedSizeFor(p) {
+  if (p.sizes.length === 1) return p.sizes[0];
+  if (isWaistSized(p)) return pickWaist(p.sizes, store.get(KEYS.waist, null));
+  const shirt = store.get(KEYS.size, null);
+  return p.sizes.includes(shirt) ? shirt : null;
+}
 
 const store = {
   get(key, fallback) {
@@ -50,9 +61,13 @@ const market = {
     store.set(KEYS.country, code);
     location.reload();
   },
-  // USD -> tidy local price
-  price(usd) {
+  // An amount in `base` currency (product prices are SGD, delivery settings USD)
+  // -> local price. The shop's own currency keeps its exact price; others are
+  // converted and rounded up to a tidy local number.
+  price(amount, base = "SGD") {
+    if (base === this.country.currency) return amount;
     const { rate, step } = this.cur;
+    const usd = amount / CURRENCIES[base].rate;
     return Math.ceil((usd * rate) / step) * step;
   },
   // Round a local amount (e.g. a discount) to what the currency can show.
@@ -61,10 +76,10 @@ const market = {
     return step >= 10 ? Math.round(n / step) * step : Math.round(n * 100) / 100;
   },
   freeOver() {
-    return this.price(this.region.freeOver);
+    return this.price(this.region.freeOver, "USD");
   },
   fee() {
-    return this.price(this.region.fee);
+    return this.price(this.region.fee, "USD");
   },
 };
 
@@ -73,8 +88,12 @@ const money = (n) =>
 
 const priceOf = (p) => market.price(p.price);
 
+// Price with the original price struck through when the product is on sale.
+const priceTag = (p) =>
+  p.was ? `<span class="now">${money(priceOf(p))}</span> <s class="was">${money(market.price(p.was))}</s>` : money(priceOf(p));
+
 // A colourway's photos, in order. Put the on-model shot second so product
-// cards show it on hover. With no photos, the illustration stands in.
+// cards show it on hover.
 function photosOf(product, colorIndex = 0) {
   const c = product.colors[colorIndex] || product.colors[0];
   return c.images || [];
@@ -84,7 +103,7 @@ function productImage(product, colorIndex = 0, n = 0) {
   const c = product.colors[colorIndex] || product.colors[0];
   const src = photosOf(product, colorIndex)[n];
   if (src) return `<img src="${esc(src)}" alt="${esc(product.name)} in ${esc(c.name)}, photo ${n + 1}" loading="lazy"${c.crop ? ' class="crop"' : ""}>`;
-  return garmentSVG(product.type, c, c.bg);
+  return `<div class="no-photo" role="img" aria-label="${esc(product.name)} in ${esc(c.name)}" style="--c:${c.body}"></div>`;
 }
 
 // Card art: the first photo, plus the second (on-model) one revealed on hover.
@@ -160,9 +179,9 @@ function renderChrome() {
   const link = (href, label, active) => `<a href="${href}"${active ? ' aria-current="page"' : ""}>${label}</a>`;
   const nav = [
     link("shop.html", "Shop all", page === "shop" && !cat),
-    link("shop.html?c=polos", "Polos", cat === "polos"),
-    link("shop.html?c=bottoms", "Shorts &amp; Pants", cat === "bottoms"),
-    link("shop.html?c=layers", "Layers", cat === "layers"),
+    link("shop.html?c=shirts", "Shirts", cat === "shirts"),
+    link("shop.html?c=shorts", "Shorts", cat === "shorts"),
+    link("shop.html?c=pants", "Pants", cat === "pants"),
     link("about.html", "About", page === "about"),
   ];
 
@@ -286,19 +305,30 @@ function shippingInfo() {
 
 /* ------------------------------------------------------------ size finder */
 
-function sizeGuide() {
+// The shop's own size charts, one per category (or just this product's).
+function sizeGuide(product) {
+  const charts = product?.sizeChart
+    ? [[product.name, product.sizeChart]]
+    : CATEGORIES.filter((c) => c.id !== "all")
+        .map((c) => [c.label, PRODUCTS.find((p) => p.category === c.id && p.sizeChart)?.sizeChart])
+        .filter(([, src]) => src);
   modal(
     `<h2>Size guide</h2>
-     <p class="muted">Body measurements in centimetres. Our fit is regular: true to size with room to swing.</p>
-     <table class="table"><thead><tr><th>Size</th><th>Chest</th><th>Waist</th></tr></thead>
-     <tbody>${SIZE_CHART.map((r) => `<tr><td><strong>${r.size}</strong></td><td>${r.chest}</td><td>${r.waist}</td></tr>`).join("")}</tbody></table>
+     <p class="muted">Shirts use EU sizes with a regular fit. Shorts and pants are sized by waist in inches and are true to size.</p>
+     <div class="charts">${charts.map(([label, src]) => `<figure><figcaption>${esc(label)}</figcaption><img src="${esc(src)}" alt="${esc(label)} size chart" loading="lazy"></figure>`).join("")}</div>
      <button class="btn btn-block" data-sizefinder>Not sure? Find my size</button>`,
     "wide"
   );
 }
 
+// Waist sizes (inches) are in product.sizes as "30", "32"…; shirts use S–4XL.
+const isWaistSized = (p) => (p.sizes || []).every((s) => /^\d+$/.test(s));
+
+// Closest stocked waist size at or above the shopper's waist, else the largest.
+const pickWaist = (sizes, waist) => (waist ? sizes.find((s) => Number(s) >= waist) || sizes[sizes.length - 1] : null);
+
 function recommendSize(heightCm, weightKg, fit) {
-  const byWeight = [65, 76, 88, 100, 112];
+  const byWeight = [65, 76, 88, 100, 112, 124];
   let i = byWeight.findIndex((w) => weightKg < w);
   if (i === -1) i = SIZES.length - 1;
   if (heightCm >= 185) i++;
@@ -306,11 +336,14 @@ function recommendSize(heightCm, weightKg, fit) {
   return SIZES[Math.min(i, SIZES.length - 1)];
 }
 
-function sizeFinder(onPick) {
-  const saved = store.get(KEYS.size, null);
+// `forWaist`: the product is sized by waist, so "Use this size" picks the waist.
+function sizeFinder(onPick, forWaist = false) {
+  const savedShirt = store.get(KEYS.size, null);
+  const savedWaist = store.get(KEYS.waist, null);
+  const saved = savedShirt && { shirt: savedShirt, waist: savedWaist };
   const wrap = modal(`
     <h2>Find my size</h2>
-    <p class="muted">Two quick questions. We'll remember your size on every product.</p>
+    <p class="muted">A few quick questions. We'll remember your sizes on every product.</p>
     <form class="finder">
       <div class="unit-toggle" role="radiogroup" aria-label="Units">
         <label><input type="radio" name="unit" value="metric" checked> cm / kg</label>
@@ -324,8 +357,12 @@ function sizeFinder(onPick) {
         <label>Height <input name="ft" type="number" min="4" max="7" placeholder="5"> <span>ft</span> <input name="in" type="number" min="0" max="11" placeholder="9"> <span>in</span></label>
         <label>Weight <input name="lb" type="number" min="90" max="400" placeholder="165"> <span>lb</span></label>
       </div>
+      <div class="finder-row">
+        <label>Trouser waist <input name="waist" type="number" inputmode="numeric" min="26" max="50" placeholder="34"> <span>in</span></label>
+        <p class="muted small" style="margin:0">For shorts and pants. Use the waist size of trousers that fit you well.</p>
+      </div>
       <fieldset class="fit-pick">
-        <legend>How do you like your polos to fit?</legend>
+        <legend>How do you like your shirts to fit?</legend>
         <label><input type="radio" name="fit" value="regular" checked> Close to the body</label>
         <label><input type="radio" name="fit" value="relaxed"> Relaxed, a bit roomier</label>
       </fieldset>
@@ -349,21 +386,25 @@ function sizeFinder(onPick) {
     const imperial = form.unit.value === "imperial";
     const cm = imperial ? (Number(form.ft.value) * 12 + Number(form.in.value || 0)) * 2.54 : Number(form.cm.value);
     const kg = imperial ? Number(form.lb.value) * 0.4536 : Number(form.kg.value);
-    const size = recommendSize(cm, kg, form.fit.value);
-    store.set(KEYS.size, size);
+    const result = { shirt: recommendSize(cm, kg, form.fit.value), waist: Number(form.waist.value) || null };
+    store.set(KEYS.size, result.shirt);
+    store.set(KEYS.waist, result.waist);
     const out = wrap.querySelector(".finder-result");
     out.hidden = false;
-    out.innerHTML = resultHTML(size);
+    out.innerHTML = resultHTML(result);
     out.querySelector(".use-size")?.addEventListener("click", () => {
-      onPick?.(size);
+      onPick?.(result);
       wrap.remove();
     });
-    document.dispatchEvent(new CustomEvent("sizechange", { detail: size }));
   });
 
-  function resultHTML(size) {
-    return `<p>Your PAR3 size is</p><div class="big-size">${size}</div>
-      ${onPick ? `<button class="btn btn-block use-size">Use size ${size}</button>` : `<p class="muted small">We'll pre-select it on every product page.</p>`}`;
+  function resultHTML({ shirt, waist }) {
+    const pick = forWaist ? waist && `waist ${waist}` : `size ${shirt}`;
+    return `<div class="big-sizes">
+        <div><p>Shirts</p><div class="big-size">${shirt}</div></div>
+        ${waist ? `<div><p>Shorts &amp; pants</p><div class="big-size">${waist}"</div></div>` : ""}
+      </div>
+      ${onPick && pick ? `<button class="btn btn-block use-size">Use ${pick}</button>` : `<p class="muted small">We'll pre-select your size on every product page.</p>`}`;
   }
   wrap.querySelector(".use-size")?.addEventListener("click", () => {
     onPick?.(saved);
@@ -410,8 +451,8 @@ const bag = {
     return this.lines().reduce((sum, l) => sum + priceOf(l.product) * l.qty, 0);
   },
 
-  // Multi-buy on polos: returns the tier reached, the saving, and how many more
-  // polos unlock the next tier.
+  // Multi-buy on shirts: returns the tier reached, the saving, and how many more
+  // shirts unlock the next tier.
   multibuy() {
     const polos = this.lines().filter((l) => l.product.category === MULTIBUY.category);
     const qty = polos.reduce((n, l) => n + l.qty, 0);
@@ -476,10 +517,10 @@ const bag = {
          <div class="meter-block multibuy">
            <p>${
              mb.next
-               ? `Add <strong>${polosLeft} more polo${polosLeft > 1 ? "s" : ""}</strong> to save ${Math.round(mb.next.off * 100)}% on your polos`
-               : `Multi-buy unlocked: <strong>${Math.round(mb.tier.off * 100)}% off</strong> all your polos`
+               ? `Add <strong>${polosLeft} more shirt${polosLeft > 1 ? "s" : ""}</strong> to save ${Math.round(mb.next.off * 100)}% on your shirts`
+               : `Multi-buy unlocked: <strong>${Math.round(mb.tier.off * 100)}% off</strong> all your shirts`
            }</p>
-           <a class="link small" href="shop.html?c=polos">Shop polos</a>
+           <a class="link small" href="shop.html?c=shirts">Shop shirts</a>
          </div>`
       : "";
 
@@ -497,7 +538,7 @@ const bag = {
             <a class="line-img" href="product.html?id=${p.id}&c=${colorIndex}">${productImage(p, colorIndex)}</a>
             <div class="line-info">
               <a href="product.html?id=${p.id}&c=${colorIndex}" class="line-name">${esc(p.name)}</a>
-              <span class="muted">${esc(c.name)} · ${esc(size)}</span>
+              <span class="muted">${esc(c.name)} · ${esc(sizeLabel(p, size))}</span>
               <div class="qty" data-key="${esc(key)}">
                 <button aria-label="Decrease quantity" data-d="-1">−</button><span>${qty}</span><button aria-label="Increase quantity" data-d="1">+</button>
               </div>
@@ -517,7 +558,7 @@ const bag = {
     const shipping = left > 0 ? market.fee() : 0;
     document.querySelector(".drawer-foot").innerHTML = `
       <div class="sum"><span>Subtotal</span><span>${money(sub)}</span></div>
-      ${mb.saving ? `<div class="sum save"><span>Polo multi-buy (${Math.round(mb.tier.off * 100)}% off)</span><span>−${money(mb.saving)}</span></div>` : ""}
+      ${mb.saving ? `<div class="sum save"><span>Shirt multi-buy (${Math.round(mb.tier.off * 100)}% off)</span><span>−${money(mb.saving)}</span></div>` : ""}
       <div class="sum"><span>Delivery to ${esc(market.country.name)}</span><span>${shipping ? money(shipping) : "Free"}</span></div>
       <div class="sum total"><span>Total</span><span>${money(market.round(afterDiscount + shipping))}</span></div>
       <p class="muted small">Arrives in ${market.region.days}. Any import duties are shown at checkout.</p>
@@ -605,7 +646,7 @@ function productCard(p) {
         <div class="card-art">${cardArt(p, 0)}</div>
       </a>
       <div class="card-body">
-        <div class="card-row"><a href="product.html?id=${p.id}" class="card-name">${esc(p.name)}</a><span class="price">${money(priceOf(p))}</span></div>
+        <div class="card-row"><a href="product.html?id=${p.id}" class="card-name">${esc(p.name)}</a><span class="price">${priceTag(p)}</span></div>
         <p class="muted small">${esc(p.blurb)}</p>
         <div class="swatches">${swatches}</div>
       </div>
@@ -637,15 +678,13 @@ const STACK_SPOTS = [
 function renderLook(root, look) {
   const pieces = look.pieces.map((pc) => {
     const p = getProduct(pc.product);
-    const sizes = p.sizes || SIZES;
-    const mine = store.get(KEYS.size, null);
-    return { ...pc, p, sizes, colorIndex: Math.min(pc.color || 0, p.colors.length - 1), size: sizes.length === 1 ? sizes[0] : sizes.includes(mine) ? mine : null };
+    // Products with a Regular/Slim choice go in the bag as the first fit (Regular).
+    return { ...pc, p, sizes: p.sizes, fit: p.fits?.[0], colorIndex: Math.min(pc.color || 0, p.colors.length - 1), size: savedSizeFor(p) };
   });
-  // Ways to show the outfit: an on-model photo, the illustrated golfer, or the product photos.
+  // Ways to show the outfit: an on-model photo, or the product photos.
   const modes = [look.photo && { id: "photo", label: "On model" }, { id: "flat", label: "Product photos" }].filter(Boolean);
   let mode = modes[0].id;
   let active = -1;
-  const slot = (pc) => (pc.p.category === "bottoms" ? "bottom" : "top");
 
   root.innerHTML = `
     <div class="look">
@@ -664,11 +703,12 @@ function renderLook(root, look) {
             <div class="look-row" data-i="${i}">
               <button class="look-thumb" aria-label="View ${esc(pc.p.name)} photos"></button>
               <div class="look-info">
-                <div class="card-row"><a class="card-name" href="product.html?id=${pc.p.id}">${esc(pc.p.name)}</a><span class="price">${money(priceOf(pc.p))}</span></div>
+                <div class="card-row"><a class="card-name" href="product.html?id=${pc.p.id}">${esc(pc.p.name)}</a><span class="price">${priceTag(pc.p)}</span></div>
                 <div class="look-colour small">Colour: <strong></strong> <span class="muted">· ${pc.p.colors.length} colour${pc.p.colors.length > 1 ? "s" : ""} available</span></div>
                 <div class="swatches">${pc.p.colors
                   .map((c, ci) => `<button class="swatch" style="--c:${c.body}" data-ci="${ci}" aria-label="${esc(c.name)}"></button>`)
                   .join("")}</div>
+                ${isWaistSized(pc.p) ? `<span class="muted small">Waist (inches)${pc.fit ? ` · ${esc(pc.fit)}` : ""}</span>` : ""}
                 <div class="sizes sm">${pc.sizes.map((s) => `<button class="size${s === pc.size ? " on" : ""}" data-s="${s}">${s}</button>`).join("")}</div>
                 <a class="link small" href="product.html?id=${pc.p.id}">View details</a>
               </div>
@@ -678,7 +718,7 @@ function renderLook(root, look) {
         </div>
         <div class="look-total"><span>Complete look</span><strong>${money(pieces.reduce((n, pc) => n + priceOf(pc.p), 0))}</strong></div>
         <button class="btn btn-block look-add">Add the look to bag</button>
-        <p class="muted small">Pick a size for each piece. Polo multi-buy and free delivery still apply.</p>
+        <p class="muted small">Pick a size for each piece. Shirt multi-buy and free delivery still apply.</p>
       </div>
     </div>`;
 
@@ -763,7 +803,7 @@ function renderLook(root, look) {
       toast("Pick a size for each piece");
       return;
     }
-    pieces.forEach((pc) => bag.add(pc.p.id, pc.colorIndex, pc.size));
+    pieces.forEach((pc) => bag.add(pc.p.id, pc.colorIndex, pc.fit ? `${pc.size} · ${pc.fit}` : pc.size));
   });
 }
 
@@ -772,9 +812,10 @@ function renderLook(root, look) {
 const pages = {
   home() {
     const grid = document.getElementById("featured");
-    const picks = ["solid-active-wear-shirt", "nautical-golf-short", "shoulder-stripe-polo", "tour-dri-fit-polo"];
-    renderLook(document.getElementById("look"), LOOKS[0]);
-    grid.innerHTML = picks.map((id) => productCard(getProduct(id))).join("");
+    const picks = FEATURED.map(productNamed).filter(Boolean);
+    if (LOOKS[0]) renderLook(document.getElementById("look"), LOOKS[0]);
+    else document.getElementById("look").closest("section").remove();
+    grid.innerHTML = picks.map(productCard).join("");
     bindCards(grid);
 
     if (HERO.photo) {
@@ -787,24 +828,20 @@ const pages = {
       banner.setAttribute("aria-label", HERO.alt);
     }
     const hero = document.getElementById("hero-art");
-    const heroPieces = [
-      ["solid-active-wear-shirt", 4],
-      ["nautical-golf-short", 0],
-      ["shoulder-stripe-polo", 0],
-    ];
+    // The look's pieces first (in the look's colours), then the next featured product.
+    const heroPieces = [...(LOOKS[0]?.pieces || []).map((pc) => [getProduct(pc.product), pc.color]), ...picks.map((p) => [p, 0])]
+      .filter(([p], i, all) => all.findIndex(([q]) => q.id === p.id) === i)
+      .slice(0, 3);
     hero.innerHTML = heroPieces
-      .map(([id, c], n) => {
-        const p = getProduct(id);
-        return `<a href="product.html?id=${id}&c=${c}" class="hero-tile t${n}" aria-label="${esc(p.name)}">${productImage(p, c)}</a>`;
-      })
+      .map(([p, c], n) => `<a href="product.html?id=${p.id}&c=${c}" class="hero-tile t${n}" aria-label="${esc(p.name)}">${productImage(p, c)}</a>`)
       .join("");
 
+    // Each category tile shows its best-known product.
     const cats = document.getElementById("cats");
-    const catArt = { polos: ["tour-dri-fit-polo", 1], bottoms: ["stretch-golf-pants", 1], layers: ["quarter-zip-pullover", 2], headwear: ["bucket-hat", 0] };
     cats.innerHTML = CATEGORIES.filter((c) => c.id !== "all")
       .map((c) => {
-        const [id, ci] = catArt[c.id];
-        return `<a class="tile" href="shop.html?c=${c.id}">${productImage(getProduct(id), ci)}<span>${c.label}</span></a>`;
+        const p = picks.find((x) => x.category === c.id) || PRODUCTS.find((x) => x.category === c.id);
+        return p ? `<a class="tile" href="shop.html?c=${c.id}">${productImage(p, 0)}<span>${c.label}</span></a>` : "";
       })
       .join("");
 
@@ -815,8 +852,11 @@ const pages = {
         <em>${PRODUCTS.filter((p) => p.conditions.includes(c.id)).length} pieces →</em></a>`
     ).join("");
 
-    const mbPrice = priceOf(getProduct("tour-dri-fit-polo"));
-    document.getElementById("mb-example").textContent = `Three Tour polos: ${money(mbPrice * 3)} → ${money(market.round(mbPrice * 3 * 0.85))}`;
+    const example = picks.find((p) => p.category === MULTIBUY.category);
+    if (example) {
+      const each = priceOf(example);
+      document.getElementById("mb-example").textContent = `Three ${example.name}s: ${money(market.round(each * 3))} → ${money(market.round(each * 3 * 0.85))}`;
+    }
 
     document.querySelectorAll("[data-signup]").forEach((el) => (el.innerHTML = signupForm(el.dataset.signup)));
     document.querySelectorAll("[data-offer]").forEach((el) => (el.textContent = WELCOME_OFFER));
@@ -883,12 +923,14 @@ const pages = {
     const params = new URLSearchParams(location.search);
     const p = getProduct(params.get("id")) || PRODUCTS[0];
     let colorIndex = Math.min(Number(params.get("c")) || 0, p.colors.length - 1);
-    const sizes = p.sizes || SIZES;
-    const mySize = store.get(KEYS.size, null);
-    let size = sizes.length === 1 ? sizes[0] : sizes.includes(mySize) ? mySize : null;
+    const sizes = p.sizes;
+    let size = savedSizeFor(p);
+    const fromFinder = sizes.length > 1 && size;
+    let fit = p.fits?.[0] || null;
     document.title = `${p.name} | ${BRAND.name}`;
-    const isPolo = p.category === MULTIBUY.category;
-    const apparel = !p.sizes;
+    const isShirt = p.category === MULTIBUY.category;
+    const waist = isWaistSized(p);
+    const sized = sizes.length > 1;
 
     const el = document.getElementById("product");
     el.innerHTML = `
@@ -901,9 +943,9 @@ const pages = {
         <div class="pdp-info">
           ${p.badge ? `<span class="tag static">${esc(p.badge)}</span>` : ""}
           <h1>${esc(p.name)}</h1>
-          <p class="pdp-price">${money(priceOf(p))}</p>
-          ${isPolo ? `<p class="mb-note"><strong>Multi-buy:</strong> any 2 polos save 10%, 3 or more save 15%. Mix styles and colours.</p>` : ""}
-          <p>${esc(p.description)}</p>
+          <p class="pdp-price">${priceTag(p)}</p>
+          ${isShirt ? `<p class="mb-note"><strong>Multi-buy:</strong> any 2 shirts save 10%, 3 or more save 15%. Mix styles and colours.</p>` : ""}
+          ${p.description ? `<p>${esc(p.description)}</p>` : ""}
           <div class="cond-tags">${p.conditions.map((c) => `<a href="shop.html?w=${c}" class="cond-tag">${CONDITIONS.find((x) => x.id === c).label}</a>`).join("")}</div>
           <div class="opt">
             <div class="opt-label">Colour: <strong class="color-name"></strong></div>
@@ -911,10 +953,18 @@ const pages = {
               .map((c, i) => `<button class="swatch" style="--c:${c.body}" data-i="${i}" aria-label="${esc(c.name)}"></button>`)
               .join("")}</div>
           </div>
+          ${
+            p.fits
+              ? `<div class="opt">
+            <div class="opt-label">Fit: <strong class="fit-name">${esc(fit)}</strong></div>
+            <div class="sizes fits">${p.fits.map((f) => `<button class="size fit${f === fit ? " on" : ""}" data-f="${esc(f)}">${esc(f)}</button>`).join("")}</div>
+          </div>`
+              : ""
+          }
           <div class="opt">
-            <div class="opt-label">Size${apparel ? '<span class="size-links"><a href="#" class="link small find-size">Find my size</a> <a href="#" class="link small" data-sizeguide>Size guide</a></span>' : ""}</div>
-            <div class="sizes">${sizes.map((s) => `<button class="size${s === size ? " on" : ""}" data-s="${s}">${s}</button>`).join("")}</div>
-            ${apparel && size && size === mySize ? `<p class="muted small size-hint">Pre-selected from your size finder result.</p>` : ""}
+            <div class="opt-label">${waist ? "Waist size (inches)" : "Size"}${sized ? '<span class="size-links"><a href="#" class="link small find-size">Find my size</a> <a href="#" class="link small open-chart">Size chart</a></span>' : ""}</div>
+            <div class="sizes picks">${sizes.map((s) => `<button class="size${s === size ? " on" : ""}" data-s="${s}">${s}</button>`).join("")}</div>
+            ${fromFinder ? `<p class="muted small size-hint">Pre-selected from your size finder result.</p>` : ""}
           </div>
           <button class="btn btn-block add">Add to bag · ${money(priceOf(p))}</button>
           <ul class="assure">
@@ -924,7 +974,7 @@ const pages = {
           </ul>
           <div class="accordions">
             <details open><summary>Details</summary><ul>${p.features.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></details>
-            <details><summary>Fit &amp; care</summary><p>Regular fit, true to size. Machine wash cold, don't tumble dry, and don't iron over the logo. Our quick-dry fabrics are usually dry within an hour on a hanger.</p></details>
+            ${p.sizeChart ? `<details><summary>Size chart</summary><button class="chart-btn open-chart" aria-label="Open size chart"><img src="${esc(p.sizeChart)}" alt="${esc(p.name)} size chart" loading="lazy"></button></details>` : ""}
             <details><summary>Reviews</summary><p>No reviews yet. Reviews from verified buyers will appear here once the store is live.</p></details>
           </div>
         </div>
@@ -967,30 +1017,48 @@ const pages = {
         drawColor();
       })
     );
+    const picks = el.querySelector(".sizes.picks");
     const pickSize = (s) => {
       size = s;
-      el.querySelectorAll(".size").forEach((x) => x.classList.toggle("on", x.dataset.s === s));
-      el.querySelector(".sizes").classList.remove("need");
+      picks.querySelectorAll(".size").forEach((x) => x.classList.toggle("on", x.dataset.s === s));
+      picks.classList.remove("need");
     };
-    el.querySelectorAll(".size").forEach((b) => b.addEventListener("click", () => pickSize(b.dataset.s)));
+    picks.querySelectorAll(".size").forEach((b) => b.addEventListener("click", () => pickSize(b.dataset.s)));
+    el.querySelectorAll(".fit").forEach((b) =>
+      b.addEventListener("click", () => {
+        fit = b.dataset.f;
+        el.querySelectorAll(".fit").forEach((x) => x.classList.toggle("on", x === b));
+        el.querySelector(".fit-name").textContent = fit;
+      })
+    );
     el.querySelector(".find-size")?.addEventListener("click", (e) => {
       e.preventDefault();
-      sizeFinder(pickSize);
+      sizeFinder((r) => {
+        const s = waist ? pickWaist(sizes, r.waist) : sizes.includes(r.shirt) ? r.shirt : null;
+        if (s) pickSize(s);
+        else toast(waist ? "Add your trouser waist to get a size" : `${r.shirt} isn't available in this style`);
+      }, waist);
     });
+    el.querySelectorAll(".open-chart").forEach((b) =>
+      b.addEventListener("click", (e) => {
+        e.preventDefault();
+        sizeGuide(p);
+      })
+    );
     el.querySelector(".add").addEventListener("click", () => {
       if (!size) {
-        el.querySelector(".sizes").classList.add("need");
+        picks.classList.add("need");
         toast("Pick a size first");
         return;
       }
-      bag.add(p.id, colorIndex, size);
+      bag.add(p.id, colorIndex, fit ? `${size} · ${fit}` : size);
     });
     drawColor();
 
     const look = LOOKS.find((l) => l.pieces.some((pc) => pc.product === p.id));
     if (look) renderLook(document.getElementById("pdp-look"), look);
 
-    const pairs = { polos: ["bottoms", "headwear"], bottoms: ["polos", "layers"], layers: ["polos", "bottoms"], headwear: ["polos", "bottoms"] };
+    const pairs = { shirts: ["shorts", "pants"], shorts: ["shirts"], pants: ["shirts"] };
     const related = PRODUCTS.filter((x) => x.id !== p.id && pairs[p.category].includes(x.category)).slice(0, 4);
     const grid = document.getElementById("related");
     grid.innerHTML = related.map(productCard).join("");

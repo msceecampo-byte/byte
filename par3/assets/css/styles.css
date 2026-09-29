@@ -144,8 +144,8 @@ p { margin: 0 0 1em; }
 .empty-grid { grid-column: 1 / -1; text-align: center; padding: 48px 0; }
 
 /* ---------------------------------------------------------------- category tiles */
-.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-@media (max-width: 760px) { .tiles { grid-template-columns: 1fr 1fr; } }
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 760px) { .tiles { grid-template-columns: 1fr 1fr 1fr; gap: 8px; } .tile span { left: 6px; bottom: 6px; padding: 5px 8px; font-size: 0.72rem; } }
 .tile { position: relative; border-radius: var(--radius); overflow: hidden; }
 .tile svg { width: 100%; height: auto; aspect-ratio: 4 / 5; transition: transform 0.5s; }
 .tile:hover svg { transform: scale(1.04); }
@@ -221,8 +221,8 @@ select { font: inherit; border: 1px solid var(--line); background: var(--bg); bo
 .pdp-art svg, .pdp-art img { width: 100%; height: auto; aspect-ratio: 4 / 5; border-radius: var(--radius); object-fit: cover; }
 .zoom-hint { position: absolute; right: 12px; bottom: 12px; background: rgba(255, 255, 255, 0.92); color: var(--brand); font-size: 0.74rem; font-weight: 700; padding: 6px 10px; border-radius: 4px; opacity: 0; transition: opacity 0.2s; }
 .pdp-art:hover .zoom-hint, .pdp-art:focus-visible .zoom-hint { opacity: 1; }
-.thumbs { display: flex; gap: 10px; margin-top: 10px; }
-.thumbs button { width: 72px; padding: 0; border: 2px solid transparent; border-radius: var(--radius); overflow: hidden; background: none; }
+.thumbs { display: flex; gap: 10px; margin-top: 10px; overflow-x: auto; scrollbar-width: thin; }
+.thumbs button { flex: none; width: 72px; padding: 0; border: 2px solid transparent; border-radius: var(--radius); overflow: hidden; background: none; }
 .thumbs button.on { border-color: var(--brand); }
 .thumbs svg, .thumbs img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; }
 .lightbox { position: fixed; inset: 0; z-index: 80; background: rgba(10, 13, 25, 0.94); display: grid; place-items: center; padding: 56px 16px; }
@@ -264,7 +264,7 @@ summary::after { content: "+"; font-size: 1.1rem; font-weight: 400; }
 details[open] summary::after { content: "−"; }
 details p, details ul { margin: 10px 0 0; color: var(--muted); }
 details ul { padding-left: 18px; }
-@media (max-width: 820px) { .pdp { grid-template-columns: 1fr; } .pdp-media { position: static; } }
+@media (max-width: 820px) { .pdp { grid-template-columns: minmax(0, 1fr); } .pdp-media { position: static; } }
 
 /* ---------------------------------------------------------------- bag drawer */
 .scrim { position: fixed; inset: 0; background: rgba(15, 20, 30, 0.45); z-index: 40; }
@@ -380,6 +380,20 @@ img.crop, .card-art img.crop, .pdp-art img.crop, .thumbs img.crop, .line-img img
 .look-modes { display: inline-flex; gap: 4px; padding: 4px; margin-bottom: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 99px; }
 .look-modes button { border: 0; background: none; padding: 7px 14px; border-radius: 99px; font-size: 0.8rem; font-weight: 600; color: var(--muted); }
 .look-modes button[aria-selected="true"] { background: var(--brand); color: var(--on-brand); }
+
+/* ---------------------------------------------------------------- real catalogue */
+.price .now, .pdp-price .now { color: var(--accent); }
+.price .was, .pdp-price .was { color: var(--muted); font-weight: 400; font-size: 0.85em; margin-left: 4px; }
+.card-row .price { text-align: right; }
+.no-photo { aspect-ratio: 4 / 5; background: var(--c, var(--surface)); opacity: 0.35; }
+.charts { display: grid; gap: 18px; margin: 12px 0 20px; }
+.charts figure { margin: 0; }
+.charts figcaption { font-weight: 700; margin-bottom: 6px; }
+.charts img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: var(--radius); }
+.chart-btn { display: block; width: 100%; margin-top: 10px; padding: 0; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; cursor: zoom-in; overflow: hidden; }
+.chart-btn img { width: 100%; height: auto; }
+.big-sizes { display: flex; justify-content: center; gap: 32px; }
+.big-sizes p { margin: 0; font-size: 0.82rem; color: var(--muted); }
 
 /* ---------------------------------------------------------------- hero photo */
 .hero.hero-photo {
