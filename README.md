@@ -30,6 +30,7 @@ Prices are in SGD (S$79–119 for apparel, S$39–45 for accessories). They assu
 ## Social media
 
 `social/PLAYBOOK.md` is the creator playbook for the personal account: positioning, content pillars, 30 reel ideas, a 4-week calendar and the plan for reaching S$3,000 a month.
+`social/WEEK1-SCRIPTS.md` has word-for-word scripts for the first week of reels and three sample UGC videos to film for your portfolio. `social/ugc-portfolio.html` is the portfolio and rate card for pitching brands.
 
 ## Logo files
 
