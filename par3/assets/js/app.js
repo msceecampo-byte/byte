@@ -777,6 +777,15 @@ const pages = {
     grid.innerHTML = picks.map((id) => productCard(getProduct(id))).join("");
     bindCards(grid);
 
+    if (HERO.photo) {
+      const banner = document.querySelector(".hero");
+      banner.classList.add("hero-photo");
+      // Absolute URLs: a relative url() in a custom property resolves against the stylesheet.
+      const abs = (src) => new URL(src, location.href).href;
+      banner.style.setProperty("--hero", `url("${abs(HERO.photo)}")`);
+      banner.style.setProperty("--hero-phone", `url("${abs(HERO.phone || HERO.photo)}")`);
+      banner.setAttribute("aria-label", HERO.alt);
+    }
     const hero = document.getElementById("hero-art");
     const heroPieces = [
       ["solid-active-wear-shirt", 4],

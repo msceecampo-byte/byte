@@ -24,6 +24,10 @@ python3 -m http.server 8000
 - **Shop the look.** A clickable outfit on the home page and on each piece's product page. Tap a piece or its + marker to select it, see every available colour, pick sizes and add the whole look to the bag in one go. Until there's an on-model photo, the look shows the product photos as a styled outfit, and the shirt changes to the colour the shopper picks. Looks are set up in `LOOKS` in `assets/js/products.js`: add an on-model `photo` of a person wearing the pieces and an `x`/`y` hotspot position for each piece, and it becomes the main view with an "On model / Product photos" switch.
 - **Email signup with a welcome offer.** "10% off your first order" is a placeholder, so confirm the amount before launch.
 
+## Photoshoot
+
+`PHOTOSHOOT.md` is the brief for the photographer: the shot list, framing, sizes and file names for every photo slot on the site, including the full-width home page banner (`HERO` in `assets/js/config.js`).
+
 ## Before launch: replace the placeholders
 
 1. **Logo.** `brand/pariii-logo-navy.svg`, `pariii-logo-white.svg` and `pariii-label.svg` were traced from the woven PARIII neck label in a product photo. They read well at header size, but the edges carry some of the fabric texture. Swap in the official vector artwork with the same file names when you have it.

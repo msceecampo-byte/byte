@@ -73,3 +73,12 @@ const MULTIBUY = {
 
 // Welcome offer shown with the email signup. Confirm the amount before launch.
 const WELCOME_OFFER = "10% off your first order";
+
+// Home page banner photo from the photoshoot (see PHOTOSHOOT.md, shot 1).
+// While `photo` is null, the banner shows product photos instead.
+// `phone` is an optional taller crop for small screens.
+const HERO = {
+  photo: null, // e.g. "assets/img/hero-fairway.jpg"
+  phone: null, // e.g. "assets/img/hero-fairway-phone.jpg"
+  alt: "Golfer on the fairway wearing the PARIII Solid Active Wear Shirt and Nautical Golf Short",
+};
