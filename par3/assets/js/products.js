@@ -29,6 +29,52 @@ const SIZES = ["S", "M", "L", "XL", "2XL", "3XL"];
 
 const PRODUCTS = [
   {
+    id: "textured-dri-fit-polo",
+    name: "Textured Dri-Fit Polo",
+    category: "polos",
+    type: "polo",
+    price: 45,
+    badge: "Bestseller",
+    conditions: ["hot", "mild"],
+    blurb: "Tonal texture, embroidered PARIII chest logo.",
+    description:
+      "A clean, classic polo in a lightweight knit with a subtle tonal stripe texture. Quick-dry and breathable, with a three-button placket and the PARIII logo embroidered on the chest. It goes with everything, especially our printed shorts.",
+    features: ["Lightweight dri-fit knit with tonal texture", "Moisture-wicking and quick-dry", "Three-button placket", "Embroidered PARIII chest logo"],
+    colors: [
+      {
+        name: "Black",
+        body: C.black,
+        trim: C.black,
+        accent: C.white,
+        bg: BG.light,
+        images: ["assets/img/textured-polo-black-front.webp", "assets/img/textured-polo-black-back.webp"],
+      },
+    ],
+  },
+  {
+    id: "heart-print-golf-shorts",
+    name: "Heart Print Golf Shorts",
+    category: "bottoms",
+    type: "shorts",
+    price: 59,
+    badge: "New",
+    conditions: ["hot"],
+    blurb: "A bold all-over print that gets noticed on the tee.",
+    description:
+      "Tailored golf shorts with an all-over red and blue heart outline print on a dark navy base. Stretch fabric, a button waist with belt loops, and a PARIII logo on the back. Wear them with a solid polo and let the shorts do the talking.",
+    features: ["Stretch woven fabric", "All-over printed pattern", "Button back pocket", "PARIII logo on back and waistband"],
+    colors: [
+      {
+        name: "Navy Hearts",
+        body: "#1E2436",
+        trim: "#1E2436",
+        accent: "#E4533A",
+        bg: BG.cool,
+        images: ["assets/img/heart-print-shorts-navy-front.webp", "assets/img/heart-print-shorts-navy-back.webp"],
+      },
+    ],
+  },
+  {
     id: "shoulder-stripe-polo",
     name: "Shoulder Stripe Polo",
     category: "polos",
@@ -41,7 +87,7 @@ const PRODUCTS = [
       "A clean pique polo with a woven stripe tape across each shoulder and a snap-button placket that sits neat all round. Light, breathable and easy to wear on and off the course.",
     features: ["Breathable dri-fit pique", "Woven navy and white shoulder tape", "Snap-button placket", "Classic PARIII neck label"],
     colors: [
-      { name: "Aqua", body: "#BFE6F0", trim: "#BFE6F0", accent: C.navy, bg: BG.cool, images: ["assets/img/shoulder-stripe-polo-aqua-collar.webp"] },
+      { name: "Aqua", body: "#BFE6F0", trim: "#BFE6F0", accent: C.navy, bg: BG.cool, crop: true, images: ["assets/img/shoulder-stripe-polo-aqua-collar.webp"] },
     ],
   },
   {
@@ -250,6 +296,23 @@ const PRODUCTS = [
     colors: [
       { name: "Stone", body: C.stone, trim: C.khaki, accent: C.navy, bg: BG.warm },
       { name: "Navy", body: C.navy, trim: C.navy, accent: C.white, bg: BG.cool },
+    ],
+  },
+];
+
+// Outfits for the "Shop the look" section. Each piece is clickable.
+// Until `photo` is set, the look shows the product photos as a styled outfit.
+// For an on-model photo, set `photo` and give each piece an `x`/`y` hotspot
+// position in % of the photo (e.g. the polo's chest and the shorts' leg).
+const LOOKS = [
+  {
+    id: "black-and-hearts",
+    title: "The Weekend Round",
+    note: "A clean black polo lets the heart print shorts do the talking.",
+    photo: null,
+    pieces: [
+      { product: "textured-dri-fit-polo", x: 50, y: 30 },
+      { product: "heart-print-golf-shorts", x: 50, y: 72 },
     ],
   },
 ];

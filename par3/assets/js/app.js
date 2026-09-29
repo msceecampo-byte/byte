@@ -83,7 +83,7 @@ function photosOf(product, colorIndex = 0) {
 function productImage(product, colorIndex = 0, n = 0) {
   const c = product.colors[colorIndex] || product.colors[0];
   const src = photosOf(product, colorIndex)[n];
-  if (src) return `<img src="${esc(src)}" alt="${esc(product.name)} in ${esc(c.name)}, photo ${n + 1}" loading="lazy">`;
+  if (src) return `<img src="${esc(src)}" alt="${esc(product.name)} in ${esc(c.name)}, photo ${n + 1}" loading="lazy"${c.crop ? ' class="crop"' : ""}>`;
   return garmentSVG(product.type, c, c.bg);
 }
 
@@ -626,20 +626,129 @@ function bindCards(root) {
   });
 }
 
+/* ------------------------------------------------------------ shop the look */
+
+// Hotspot spots on the styled outfit, used until a look has an on-model photo.
+const STACK_SPOTS = [
+  { x: 50, y: 25 },
+  { x: 50, y: 74 },
+];
+
+function renderLook(root, look) {
+  const pieces = look.pieces.map((pc) => {
+    const p = getProduct(pc.product);
+    const sizes = p.sizes || SIZES;
+    const mine = store.get(KEYS.size, null);
+    return { ...pc, p, sizes, colorIndex: 0, size: sizes.length === 1 ? sizes[0] : sizes.includes(mine) ? mine : null };
+  });
+  const spots = pieces.map((pc, i) => (look.photo ? { x: pc.x, y: pc.y } : STACK_SPOTS[i] || { x: 50, y: 50 }));
+
+  root.innerHTML = `
+    <div class="look">
+      <div class="look-visual${look.photo ? " has-photo" : ""}">
+        ${
+          look.photo
+            ? `<img src="${esc(look.photo)}" alt="${esc(look.title)}: ${pieces.map((pc) => esc(pc.p.name)).join(" and ")}">`
+            : `<div class="look-stack">${pieces.map((pc, i) => `<button class="look-piece lp${i}" data-i="${i}" aria-label="Select ${esc(pc.p.name)}"></button>`).join("")}</div>`
+        }
+        ${spots
+          .map((s, i) => `<button class="hotspot" data-i="${i}" style="left:${s.x}%;top:${s.y}%" aria-label="Shop ${esc(pieces[i].p.name)}"><span>+</span></button>`)
+          .join("")}
+      </div>
+      <div class="look-panel">
+        <p class="eyebrow">Shop the look</p>
+        <h2>${esc(look.title)}</h2>
+        <p class="muted">${esc(look.note)} Tap any piece to shop it.</p>
+        <div class="look-rows">
+          ${pieces
+            .map(
+              (pc, i) => `
+            <div class="look-row" data-i="${i}">
+              <button class="look-thumb" aria-label="View ${esc(pc.p.name)} photos"></button>
+              <div class="look-info">
+                <div class="card-row"><a class="card-name" href="product.html?id=${pc.p.id}">${esc(pc.p.name)}</a><span class="price">${money(priceOf(pc.p))}</span></div>
+                <div class="look-colour small">Colour: <strong></strong> <span class="muted">· ${pc.p.colors.length} colour${pc.p.colors.length > 1 ? "s" : ""} available</span></div>
+                <div class="swatches">${pc.p.colors
+                  .map((c, ci) => `<button class="swatch" style="--c:${c.body}" data-ci="${ci}" aria-label="${esc(c.name)}"></button>`)
+                  .join("")}</div>
+                <div class="sizes sm">${pc.sizes.map((s) => `<button class="size${s === pc.size ? " on" : ""}" data-s="${s}">${s}</button>`).join("")}</div>
+                <a class="link small" href="product.html?id=${pc.p.id}">View details</a>
+              </div>
+            </div>`
+            )
+            .join("")}
+        </div>
+        <div class="look-total"><span>Complete look</span><strong>${money(pieces.reduce((n, pc) => n + priceOf(pc.p), 0))}</strong></div>
+        <button class="btn btn-block look-add">Add the look to bag</button>
+        <p class="muted small">Pick a size for each piece. Polo multi-buy and free delivery still apply.</p>
+      </div>
+    </div>`;
+
+  const rows = root.querySelectorAll(".look-row");
+  const drawPiece = (i) => {
+    const pc = pieces[i];
+    const row = rows[i];
+    row.querySelector(".look-thumb").innerHTML = productImage(pc.p, pc.colorIndex);
+    row.querySelector(".look-colour strong").textContent = pc.p.colors[pc.colorIndex].name;
+    row.querySelectorAll(".swatch").forEach((s) => s.classList.toggle("on", Number(s.dataset.ci) === pc.colorIndex));
+    const piece = root.querySelector(`.look-piece[data-i="${i}"]`);
+    if (piece) piece.innerHTML = productImage(pc.p, pc.colorIndex);
+  };
+  const select = (i) => {
+    rows.forEach((r, n) => r.classList.toggle("active", n === i));
+    root.querySelectorAll(".hotspot, .look-piece").forEach((h) => h.classList.toggle("active", Number(h.dataset.i) === i));
+    if (matchMedia("(max-width: 820px)").matches) rows[i].scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  pieces.forEach((pc, i) => {
+    const row = rows[i];
+    row.querySelectorAll(".swatch").forEach((s) =>
+      s.addEventListener("click", () => {
+        pc.colorIndex = Number(s.dataset.ci);
+        drawPiece(i);
+        select(i);
+      })
+    );
+    row.querySelectorAll(".size").forEach((b) =>
+      b.addEventListener("click", () => {
+        pc.size = b.dataset.s;
+        row.querySelectorAll(".size").forEach((x) => x.classList.toggle("on", x === b));
+        row.querySelector(".sizes").classList.remove("need");
+        select(i);
+      })
+    );
+    row.querySelector(".look-thumb").addEventListener("click", () => lightbox(pc.p, pc.colorIndex));
+    drawPiece(i);
+  });
+  root.querySelectorAll(".hotspot, .look-piece").forEach((h) => h.addEventListener("click", () => select(Number(h.dataset.i))));
+
+  root.querySelector(".look-add").addEventListener("click", () => {
+    const missing = pieces.map((pc, i) => (pc.size ? -1 : i)).filter((i) => i >= 0);
+    if (missing.length) {
+      missing.forEach((i) => rows[i].querySelector(".sizes").classList.add("need"));
+      select(missing[0]);
+      toast("Pick a size for each piece");
+      return;
+    }
+    pieces.forEach((pc) => bag.add(pc.p.id, pc.colorIndex, pc.size));
+  });
+}
+
 /* ------------------------------------------------------------ pages */
 
 const pages = {
   home() {
     const grid = document.getElementById("featured");
-    const picks = ["shoulder-stripe-polo", "tour-dri-fit-polo", "tech-golf-shorts", "quarter-zip-pullover"];
+    const picks = ["textured-dri-fit-polo", "heart-print-golf-shorts", "shoulder-stripe-polo", "tour-dri-fit-polo"];
+    renderLook(document.getElementById("look"), LOOKS[0]);
     grid.innerHTML = picks.map((id) => productCard(getProduct(id))).join("");
     bindCards(grid);
 
     const hero = document.getElementById("hero-art");
     const heroPieces = [
+      ["textured-dri-fit-polo", 0],
+      ["heart-print-golf-shorts", 0],
       ["shoulder-stripe-polo", 0],
-      ["tech-golf-shorts", 0],
-      ["tour-cap", 1],
     ];
     hero.innerHTML = heroPieces
       .map(([id, c], n) => {
@@ -778,8 +887,9 @@ const pages = {
           </div>
         </div>
       </div>
+      ${LOOKS.some((l) => l.pieces.some((pc) => pc.product === p.id)) ? `<section class="section look-section" id="pdp-look"></section>` : ""}
       <section class="section">
-        <div class="section-head"><h2>Complete the look</h2></div>
+        <div class="section-head"><h2>You might also like</h2></div>
         <div class="grid" id="related"></div>
       </section>`;
 
@@ -834,6 +944,9 @@ const pages = {
       bag.add(p.id, colorIndex, size);
     });
     drawColor();
+
+    const look = LOOKS.find((l) => l.pieces.some((pc) => pc.product === p.id));
+    if (look) renderLook(document.getElementById("pdp-look"), look);
 
     const pairs = { polos: ["bottoms", "headwear"], bottoms: ["polos", "layers"], layers: ["polos", "bottoms"], headwear: ["polos", "bottoms"] };
     const related = PRODUCTS.filter((x) => x.id !== p.id && pairs[p.category].includes(x.category)).slice(0, 4);
