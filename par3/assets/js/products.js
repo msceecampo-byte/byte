@@ -27,50 +27,64 @@ const BG = { light: "#EEF0F3", warm: "#F1EEE8", cool: "#E8EEF3", green: "#E7F0EB
 
 const SIZES = ["S", "M", "L", "XL", "2XL", "3XL"];
 
+const FABRIC_1 = "100% StretchTech polyester";
+const FABRIC_2 = "Super soft, lightweight and quick drying";
+const FABRIC_3 = "Shrink free, wrinkle free and fade free";
+
+// A Solid Active Wear Shirt colourway with its front and back photos.
+const shirt = (name, body, file, bg) => ({
+  name,
+  body,
+  trim: body,
+  accent: "#FFFFFF",
+  bg,
+  images: [`assets/img/solid-shirt-${file}-front.webp`, `assets/img/solid-shirt-${file}-back.webp`],
+});
+
 const PRODUCTS = [
   {
-    id: "textured-dri-fit-polo",
-    name: "Textured Dri-Fit Polo",
+    id: "solid-active-wear-shirt",
+    name: "PARIII Solid Active Wear Shirt",
     category: "polos",
     type: "polo",
     price: 45,
     badge: "Bestseller",
     conditions: ["hot", "mild"],
-    blurb: "Tonal texture, embroidered PARIII chest logo.",
+    blurb: "Super soft, quick drying, in five colours.",
     description:
-      "A clean, classic polo in a lightweight knit with a subtle tonal stripe texture. Quick-dry and breathable, with a three-button placket and the PARIII logo embroidered on the chest. It goes with everything, especially our printed shorts.",
-    features: ["Lightweight dri-fit knit with tonal texture", "Moisture-wicking and quick-dry", "Three-button placket", "Embroidered PARIII chest logo"],
+      "A versatile solid polo in 100% StretchTech polyester: super soft, lightweight and quick drying. It won't shrink, wrinkle or fade, so it looks as sharp on the 18th green as it did on the first tee. Finished with a three-button placket and the PARIII logo on the chest.",
+    features: [FABRIC_1, FABRIC_2, FABRIC_3, "Three-button placket", "PARIII chest logo"],
+    // Only the Black photos are real. The other colours are previews recoloured
+    // from them: replace with real photos of each colour before launch.
     colors: [
-      {
-        name: "Black",
-        body: C.black,
-        trim: C.black,
-        accent: C.white,
-        bg: BG.light,
-        images: ["assets/img/textured-polo-black-front.webp", "assets/img/textured-polo-black-back.webp"],
-      },
+      shirt("Green", "#2E7D50", "green", BG.green),
+      shirt("Navy Blue", "#1F2F5C", "navy", BG.cool),
+      shirt("Orange", "#E8702A", "orange", BG.warm),
+      shirt("Sky Blue", "#7DB9E8", "sky-blue", BG.cool),
+      shirt("Black", C.black, "black", BG.light),
     ],
   },
   {
-    id: "heart-print-golf-shorts",
-    name: "Heart Print Golf Shorts",
+    id: "nautical-golf-short",
+    name: "Nautical Golf Short",
     category: "bottoms",
     type: "shorts",
     price: 59,
     badge: "New",
     conditions: ["hot"],
-    blurb: "A bold all-over print that gets noticed on the tee.",
+    blurb: "A unique all-over print in soft, quick-drying stretch.",
     description:
-      "Tailored golf shorts with an all-over red and blue heart outline print on a dark navy base. Stretch fabric, a button waist with belt loops, and a PARIII logo on the back. Wear them with a solid polo and let the shorts do the talking.",
-    features: ["Stretch woven fabric", "All-over printed pattern", "Button back pocket", "PARIII logo on back and waistband"],
+      "Golf shorts with a unique all-over red and blue line print on a dark navy base. Made from 100% StretchTech polyester that's super soft, lightweight and quick drying, and won't shrink, wrinkle or fade. A button waist, belt loops and a PARIII logo on the back.",
+    features: [FABRIC_1, FABRIC_2, FABRIC_3, "Button back pocket", "PARIII logo on back and waistband"],
     colors: [
       {
-        name: "Navy Hearts",
+        name: "Navy",
         body: "#1E2436",
         trim: "#1E2436",
         accent: "#E4533A",
         bg: BG.cool,
-        images: ["assets/img/heart-print-shorts-navy-front.webp", "assets/img/heart-print-shorts-navy-back.webp"],
+        print: "assets/img/nautical-print-tile.webp",
+        images: ["assets/img/nautical-short-navy-front.webp", "assets/img/nautical-short-navy-back.webp"],
       },
     ],
   },
@@ -301,18 +315,20 @@ const PRODUCTS = [
 ];
 
 // Outfits for the "Shop the look" section. Each piece is clickable.
-// Until `photo` is set, the look shows the product photos as a styled outfit.
+// Until `photo` is set, the look shows an illustrated golfer wearing the pieces
+// (`model: true`, see model.js) and the product photos as a styled outfit.
 // For an on-model photo, set `photo` and give each piece an `x`/`y` hotspot
 // position in % of the photo (e.g. the polo's chest and the shorts' leg).
 const LOOKS = [
   {
     id: "black-and-hearts",
     title: "The Weekend Round",
-    note: "A clean black polo lets the heart print shorts do the talking.",
+    note: "A solid shirt lets the Nautical print do the talking. Try the shirt in all five colours.",
     photo: null,
+    model: true,
     pieces: [
-      { product: "textured-dri-fit-polo", x: 50, y: 30 },
-      { product: "heart-print-golf-shorts", x: 50, y: 72 },
+      { product: "solid-active-wear-shirt", color: 4, x: 50, y: 30 },
+      { product: "nautical-golf-short", x: 50, y: 72 },
     ],
   },
 ];

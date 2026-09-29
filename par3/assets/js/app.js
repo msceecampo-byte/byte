@@ -639,21 +639,20 @@ function renderLook(root, look) {
     const p = getProduct(pc.product);
     const sizes = p.sizes || SIZES;
     const mine = store.get(KEYS.size, null);
-    return { ...pc, p, sizes, colorIndex: 0, size: sizes.length === 1 ? sizes[0] : sizes.includes(mine) ? mine : null };
+    return { ...pc, p, sizes, colorIndex: Math.min(pc.color || 0, p.colors.length - 1), size: sizes.length === 1 ? sizes[0] : sizes.includes(mine) ? mine : null };
   });
-  const spots = pieces.map((pc, i) => (look.photo ? { x: pc.x, y: pc.y } : STACK_SPOTS[i] || { x: 50, y: 50 }));
+  // Ways to show the outfit: an on-model photo, the illustrated golfer, or the product photos.
+  const modes = [look.photo && { id: "photo", label: "On model" }, look.model && !look.photo && { id: "model", label: "On model" }, { id: "flat", label: "Product photos" }].filter(Boolean);
+  let mode = modes[0].id;
+  let active = -1;
+  const slot = (pc) => (pc.p.category === "bottoms" ? "bottom" : "top");
 
   root.innerHTML = `
     <div class="look">
-      <div class="look-visual${look.photo ? " has-photo" : ""}">
-        ${
-          look.photo
-            ? `<img src="${esc(look.photo)}" alt="${esc(look.title)}: ${pieces.map((pc) => esc(pc.p.name)).join(" and ")}">`
-            : `<div class="look-stack">${pieces.map((pc, i) => `<button class="look-piece lp${i}" data-i="${i}" aria-label="Select ${esc(pc.p.name)}"></button>`).join("")}</div>`
-        }
-        ${spots
-          .map((s, i) => `<button class="hotspot" data-i="${i}" style="left:${s.x}%;top:${s.y}%" aria-label="Shop ${esc(pieces[i].p.name)}"><span>+</span></button>`)
-          .join("")}
+      <div>
+        ${modes.length > 1 ? `<div class="look-modes" role="tablist">${modes.map((m) => `<button role="tab" data-mode="${m.id}">${m.label}</button>`).join("")}</div>` : ""}
+        <div class="look-visual"></div>
+        ${mode === "model" ? `<p class="muted small look-caption">Illustration: the shirt shows the colour you pick, the shorts show the real fabric print.</p>` : ""}
       </div>
       <div class="look-panel">
         <p class="eyebrow">Shop the look</p>
@@ -691,14 +690,63 @@ function renderLook(root, look) {
     row.querySelector(".look-thumb").innerHTML = productImage(pc.p, pc.colorIndex);
     row.querySelector(".look-colour strong").textContent = pc.p.colors[pc.colorIndex].name;
     row.querySelectorAll(".swatch").forEach((s) => s.classList.toggle("on", Number(s.dataset.ci) === pc.colorIndex));
-    const piece = root.querySelector(`.look-piece[data-i="${i}"]`);
-    if (piece) piece.innerHTML = productImage(pc.p, pc.colorIndex);
+    drawVisual();
+  };
+  const visual = root.querySelector(".look-visual");
+  const drawVisual = () => {
+    let stage;
+    let spots;
+    if (mode === "photo") {
+      stage = `<img src="${esc(look.photo)}" alt="${esc(look.title)}: ${pieces.map((pc) => esc(pc.p.name)).join(" and ")}">`;
+      spots = pieces.map((pc) => ({ x: pc.x, y: pc.y }));
+    } else if (mode === "model") {
+      const at = (which) => pieces.findIndex((pc) => slot(pc) === which);
+      const t = at("top");
+      const b = at("bottom");
+      stage = modelSVG({
+        top: t >= 0 && { color: pieces[t].p.colors[pieces[t].colorIndex] },
+        bottom: b >= 0 && { color: pieces[b].p.colors[pieces[b].colorIndex] },
+        topIndex: t,
+        bottomIndex: b,
+        label: `Illustration of a golfer wearing the ${pieces.map((pc) => pc.p.name).join(" and ")}`,
+      });
+      spots = pieces.map((pc) => MODEL_SPOTS[slot(pc)]);
+    } else {
+      stage = `<div class="look-stack">${pieces
+        .map((pc, i) => `<button class="look-piece lp${i}" data-i="${i}" aria-label="Select ${esc(pc.p.name)}">${productImage(pc.p, pc.colorIndex)}</button>`)
+        .join("")}</div>`;
+      spots = pieces.map((_, i) => STACK_SPOTS[i] || { x: 50, y: 50 });
+    }
+    visual.className = `look-visual mode-${mode}`;
+    visual.innerHTML =
+      stage +
+      spots
+        .map((sp, i) => `<button class="hotspot" data-i="${i}" style="left:${sp.x}%;top:${sp.y}%" aria-label="Shop ${esc(pieces[i].p.name)}"><span>+</span></button>`)
+        .join("");
+    visual.querySelectorAll(".hotspot, .look-piece, .m-piece").forEach((h) => {
+      h.addEventListener("click", () => select(Number(h.dataset.i)));
+      h.addEventListener("keydown", (e) => (e.key === "Enter" || e.key === " ") && h.tagName !== "BUTTON" && (e.preventDefault(), select(Number(h.dataset.i))));
+    });
+    markActive();
+  };
+  const markActive = () => {
+    rows.forEach((r, n) => r.classList.toggle("active", n === active));
+    visual.querySelectorAll(".hotspot, .look-piece, .m-piece").forEach((h) => h.classList.toggle("active", Number(h.dataset.i) === active));
   };
   const select = (i) => {
-    rows.forEach((r, n) => r.classList.toggle("active", n === i));
-    root.querySelectorAll(".hotspot, .look-piece").forEach((h) => h.classList.toggle("active", Number(h.dataset.i) === i));
+    active = i;
+    markActive();
     if (matchMedia("(max-width: 820px)").matches) rows[i].scrollIntoView({ behavior: "smooth", block: "center" });
   };
+  root.querySelectorAll(".look-modes button").forEach((b) =>
+    b.addEventListener("click", () => {
+      mode = b.dataset.mode;
+      root.querySelectorAll(".look-modes button").forEach((x) => x.setAttribute("aria-selected", String(x === b)));
+      root.querySelector(".look-caption")?.toggleAttribute("hidden", mode !== "model");
+      drawVisual();
+    })
+  );
+  root.querySelector(`.look-modes button[data-mode="${mode}"]`)?.setAttribute("aria-selected", "true");
 
   pieces.forEach((pc, i) => {
     const row = rows[i];
@@ -720,7 +768,6 @@ function renderLook(root, look) {
     row.querySelector(".look-thumb").addEventListener("click", () => lightbox(pc.p, pc.colorIndex));
     drawPiece(i);
   });
-  root.querySelectorAll(".hotspot, .look-piece").forEach((h) => h.addEventListener("click", () => select(Number(h.dataset.i))));
 
   root.querySelector(".look-add").addEventListener("click", () => {
     const missing = pieces.map((pc, i) => (pc.size ? -1 : i)).filter((i) => i >= 0);
@@ -739,15 +786,15 @@ function renderLook(root, look) {
 const pages = {
   home() {
     const grid = document.getElementById("featured");
-    const picks = ["textured-dri-fit-polo", "heart-print-golf-shorts", "shoulder-stripe-polo", "tour-dri-fit-polo"];
+    const picks = ["solid-active-wear-shirt", "nautical-golf-short", "shoulder-stripe-polo", "tour-dri-fit-polo"];
     renderLook(document.getElementById("look"), LOOKS[0]);
     grid.innerHTML = picks.map((id) => productCard(getProduct(id))).join("");
     bindCards(grid);
 
     const hero = document.getElementById("hero-art");
     const heroPieces = [
-      ["textured-dri-fit-polo", 0],
-      ["heart-print-golf-shorts", 0],
+      ["solid-active-wear-shirt", 4],
+      ["nautical-golf-short", 0],
       ["shoulder-stripe-polo", 0],
     ];
     hero.innerHTML = heroPieces
