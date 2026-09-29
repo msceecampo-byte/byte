@@ -315,8 +315,7 @@ const PRODUCTS = [
 ];
 
 // Outfits for the "Shop the look" section. Each piece is clickable.
-// Until `photo` is set, the look shows an illustrated golfer wearing the pieces
-// (`model: true`, see model.js) and the product photos as a styled outfit.
+// Until `photo` is set, the look shows the product photos as a styled outfit.
 // For an on-model photo, set `photo` and give each piece an `x`/`y` hotspot
 // position in % of the photo (e.g. the polo's chest and the shorts' leg).
 const LOOKS = [
@@ -325,7 +324,6 @@ const LOOKS = [
     title: "The Weekend Round",
     note: "A solid shirt lets the Nautical print do the talking. Try the shirt in all five colours.",
     photo: null,
-    model: true,
     pieces: [
       { product: "solid-active-wear-shirt", color: 4, x: 50, y: 30 },
       { product: "nautical-golf-short", x: 50, y: 72 },

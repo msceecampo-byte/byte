@@ -21,7 +21,7 @@ python3 -m http.server 8000
 - **Polo multi-buy.** Any 2 polos save 10%, 3 or more save 15%. The bag shows how many more polos unlock the next tier.
 - **Size finder.** Height and weight (cm/kg or ft/lb) plus fit preference give a recommended size, which is remembered and pre-selected on every product.
 - **Shop by course conditions.** Hot & humid, mild, or cool & windy.
-- **Shop the look.** A clickable outfit on the home page and on each piece's product page. Tap a piece or its + marker to select it, see every available colour, pick sizes and add the whole look to the bag in one go. Until there's an on-model photo, an illustrated golfer (`assets/js/model.js`) wears the look: his shirt changes to the colour the shopper picks and his shorts use the real fabric print. Looks are set up in `LOOKS` in `assets/js/products.js`: add an on-model `photo` and an `x`/`y` hotspot position for each piece, and the photo replaces the illustration.
+- **Shop the look.** A clickable outfit on the home page and on each piece's product page. Tap a piece or its + marker to select it, see every available colour, pick sizes and add the whole look to the bag in one go. Until there's an on-model photo, the look shows the product photos as a styled outfit, and the shirt changes to the colour the shopper picks. Looks are set up in `LOOKS` in `assets/js/products.js`: add an on-model `photo` of a person wearing the pieces and an `x`/`y` hotspot position for each piece, and it becomes the main view with an "On model / Product photos" switch.
 - **Email signup with a welcome offer.** "10% off your first order" is a placeholder, so confirm the amount before launch.
 
 ## Before launch: replace the placeholders

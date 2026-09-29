@@ -642,7 +642,7 @@ function renderLook(root, look) {
     return { ...pc, p, sizes, colorIndex: Math.min(pc.color || 0, p.colors.length - 1), size: sizes.length === 1 ? sizes[0] : sizes.includes(mine) ? mine : null };
   });
   // Ways to show the outfit: an on-model photo, the illustrated golfer, or the product photos.
-  const modes = [look.photo && { id: "photo", label: "On model" }, look.model && !look.photo && { id: "model", label: "On model" }, { id: "flat", label: "Product photos" }].filter(Boolean);
+  const modes = [look.photo && { id: "photo", label: "On model" }, { id: "flat", label: "Product photos" }].filter(Boolean);
   let mode = modes[0].id;
   let active = -1;
   const slot = (pc) => (pc.p.category === "bottoms" ? "bottom" : "top");
@@ -652,7 +652,6 @@ function renderLook(root, look) {
       <div>
         ${modes.length > 1 ? `<div class="look-modes" role="tablist">${modes.map((m) => `<button role="tab" data-mode="${m.id}">${m.label}</button>`).join("")}</div>` : ""}
         <div class="look-visual"></div>
-        ${mode === "model" ? `<p class="muted small look-caption">Illustration: the shirt shows the colour you pick, the shorts show the real fabric print.</p>` : ""}
       </div>
       <div class="look-panel">
         <p class="eyebrow">Shop the look</p>
@@ -699,18 +698,6 @@ function renderLook(root, look) {
     if (mode === "photo") {
       stage = `<img src="${esc(look.photo)}" alt="${esc(look.title)}: ${pieces.map((pc) => esc(pc.p.name)).join(" and ")}">`;
       spots = pieces.map((pc) => ({ x: pc.x, y: pc.y }));
-    } else if (mode === "model") {
-      const at = (which) => pieces.findIndex((pc) => slot(pc) === which);
-      const t = at("top");
-      const b = at("bottom");
-      stage = modelSVG({
-        top: t >= 0 && { color: pieces[t].p.colors[pieces[t].colorIndex] },
-        bottom: b >= 0 && { color: pieces[b].p.colors[pieces[b].colorIndex] },
-        topIndex: t,
-        bottomIndex: b,
-        label: `Illustration of a golfer wearing the ${pieces.map((pc) => pc.p.name).join(" and ")}`,
-      });
-      spots = pieces.map((pc) => MODEL_SPOTS[slot(pc)]);
     } else {
       stage = `<div class="look-stack">${pieces
         .map((pc, i) => `<button class="look-piece lp${i}" data-i="${i}" aria-label="Select ${esc(pc.p.name)}">${productImage(pc.p, pc.colorIndex)}</button>`)
@@ -723,7 +710,7 @@ function renderLook(root, look) {
       spots
         .map((sp, i) => `<button class="hotspot" data-i="${i}" style="left:${sp.x}%;top:${sp.y}%" aria-label="Shop ${esc(pieces[i].p.name)}"><span>+</span></button>`)
         .join("");
-    visual.querySelectorAll(".hotspot, .look-piece, .m-piece").forEach((h) => {
+    visual.querySelectorAll(".hotspot, .look-piece").forEach((h) => {
       h.addEventListener("click", () => select(Number(h.dataset.i)));
       h.addEventListener("keydown", (e) => (e.key === "Enter" || e.key === " ") && h.tagName !== "BUTTON" && (e.preventDefault(), select(Number(h.dataset.i))));
     });
@@ -731,7 +718,7 @@ function renderLook(root, look) {
   };
   const markActive = () => {
     rows.forEach((r, n) => r.classList.toggle("active", n === active));
-    visual.querySelectorAll(".hotspot, .look-piece, .m-piece").forEach((h) => h.classList.toggle("active", Number(h.dataset.i) === active));
+    visual.querySelectorAll(".hotspot, .look-piece").forEach((h) => h.classList.toggle("active", Number(h.dataset.i) === active));
   };
   const select = (i) => {
     active = i;
@@ -742,7 +729,6 @@ function renderLook(root, look) {
     b.addEventListener("click", () => {
       mode = b.dataset.mode;
       root.querySelectorAll(".look-modes button").forEach((x) => x.setAttribute("aria-selected", String(x === b)));
-      root.querySelector(".look-caption")?.toggleAttribute("hidden", mode !== "model");
       drawVisual();
     })
   );
